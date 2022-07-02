@@ -1,0 +1,70 @@
+<div nz-row class="pt-5">
+    <div nz-col nzSpan="24" class="text-center mb-5 px-3">
+        <h1>Agregar Evento</h1>
+        <form nz-form [formGroup]="validateForm" >
+            <nz-form-item class="mb-2">
+              <nz-form-control >
+                <input nz-input name="title" type="text" id="title" class="form-control" placeholder="Titulo" formControlName="title">
+              </nz-form-control>
+            </nz-form-item >
+
+            <nz-date-picker [(ngModel)]="date" (ngModelChange)="onChange($event)" class="mb-2 form-control" formControlName="date"></nz-date-picker>
+
+            <nz-time-picker [(ngModel)]="time" nzFormat="HH:mm" class="mb-2 form-control" formControlName="time"></nz-time-picker>
+
+            <textarea rows="4" nz-input class="form-control mb-2" placeholder="Dirección" formControlName="address"></textarea>
+
+            <textarea rows="4" nz-input class="form-control mb-2" placeholder="Descripcion" formControlName="description"></textarea>
+
+            <nz-form-item class="mb-2">
+                <nz-form-control >
+                  <input nz-input name="stock" type="number" id="stock" class="form-control" placeholder="Stock" formControlName="stock">
+                </nz-form-control>
+            </nz-form-item >
+
+            <nz-form-item class="mb-2">
+                <nz-form-control >
+                  <input nz-input name="price" type="number" id="price" class="form-control" placeholder="Precio" formControlName="price">
+                </nz-form-control>
+            </nz-form-item >
+            
+            <div class="mb-2">
+                <label nz-checkbox formControlName="isdiscount">
+                  <span>Descuento</span>
+                </label>
+            </div>
+
+            <ng-template  *ngIf="isdiscount">
+                <nz-select class="form-control mb-2" formControlName="discount">
+                    <nz-option nzValue="jack" nzLabel="Jack"></nz-option>
+                    <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
+                    <nz-option nzValue="disabled" nzLabel="Disabled" nzDisabled></nz-option>
+                </nz-select>
+
+                <nz-form-item class="mb-2">
+                    <nz-form-control >
+                      <input nz-input name="discount_stock" type="number" id="discount_stock" formControlName="discount_stock" class="form-control" placeholder="Stock Descuento">
+                    </nz-form-control>
+                </nz-form-item >
+            </ng-template>
+
+            <nz-upload
+                class="avatar-uploader"
+                nzName="avatar"
+                nzListType="picture-card"
+                [nzShowUploadList]="false"
+                
+                (nzChange)="handleChange($event)"
+                >
+                <ng-container *ngIf="!avatarUrl">
+                    <i class="upload-icon" nz-icon [nzType]="loading ? 'loading' : 'plus'"></i>
+                    <div class="ant-upload-text">Upload</div>
+                </ng-container>
+                <img *ngIf="avatarUrl" [src]="avatarUrl" style="width: 100%" />
+            </nz-upload>
+
+            <button nz-button class="btn w-100 py-3 mb-4" [nzType]="'primary'">Crear</button>
+            
+        </form>
+    </div>
+</div>

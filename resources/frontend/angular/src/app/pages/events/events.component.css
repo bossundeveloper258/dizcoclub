@@ -1,0 +1,7 @@
+.preventa{
+    border: 2px solid #000;
+    background-color: var(--tipme-yellow);
+    padding: 7px 12px;
+    border-radius: 5px;
+    font-size: .85em;
+}

@@ -1,0 +1,43 @@
+<ng-template #nzSubmenuUser>
+    <div class="circle-avatar">
+        <img src="assets/img/enter.png" alt="" width="20px">
+    </div>
+</ng-template>
+<ul nz-menu nzMode="horizontal" class="border-0 bg-transparent text-center d-flex justify-content-center align-items-center px-2">
+    <li nz-menu-item class="px-1">
+        <img src="assets/img/arrow.png" alt="" width="20px">
+    </li>
+    <li nz-menu-item class="px-1 w-100">
+        <img src="assets/img/LOGO.png" alt="" width="200px">
+    </li>
+    <li nz-submenu [nzTitle]="nzSubmenuUser" class="px-1" nzMenuClassName="submenu">
+      <ul>
+        <li nz-menu-item>
+            <a [routerLink]="['/login']">Iniciar Sesión</a>
+        </li>
+        <li nz-menu-item>
+            <a [routerLink]="['/events']">Comprar Tickes</a>
+        </li>
+        <li nz-menu-item>
+            <a href="">Ayuda / Soporte</a>
+        </li>
+        <li nz-menu-item>
+            <a href="">Mi cuenta</a>
+        </li>
+        <li nz-menu-item>
+            <a [routerLink]="['/events']">Eventos</a>
+        </li>
+        <li nz-menu-item>
+            <a [routerLink]="['/events/add']">Agregar Evento</a>
+        </li>
+        <li nz-menu-item>
+            <a href="">Mis tickets</a>
+        </li>
+        <li nz-menu-item>
+            <a href="">Cerrar Sesión</a>
+        </li>
+
+      </ul>
+    </li>
+    
+</ul>

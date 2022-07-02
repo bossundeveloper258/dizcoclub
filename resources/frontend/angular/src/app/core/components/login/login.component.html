@@ -1,0 +1,35 @@
+<div nz-row class="bg-gray full-scren-h">
+    <div nz-col nzSpan="24" class="">
+        <div nz-row>
+            <div nz-col nzSpan="24" class="text-center px-4 mb-5">
+                <img src="assets/img/LOGO.png" alt="" class="img-fluid">
+            </div>
+            <div nz-col nzSpan="24" class="text-center px-4 mb-3">
+                <h2>INICIAR SESIÓN</h2>
+            </div>
+            <div nz-col nzSpan="24" class="text-center px-4 mb-1">
+                <form nz-form>
+                    <nz-form-item>
+                      <nz-form-control [nzSpan]="14">
+                        <input nz-input name="email" type="email" id="email" class="form-control" placeholder="Correo / Email">
+                      </nz-form-control>
+                    </nz-form-item >
+
+                    <nz-form-item>
+                        <nz-form-control [nzSpan]="14">
+                          <input nz-input name="email" type="email" id="email" class="form-control" placeholder="Contraseña">
+                        </nz-form-control>
+                    </nz-form-item >
+                    <div class="text-center mb-3">
+                        <a href="#" class="link-secondary">Olvidé mi contraseña</a>
+                    </div>
+                    <button nz-button class="btn w-100 py-3 mb-4" [nzType]="'primary'">INGRESAR</button>
+                    <div class="text-center mb-3">
+                        <a [routerLink]="['/']">Continuar como invitado</a>
+                    </div>
+                </form>
+            </div>
+        </div> 
+        
+    </div> 
+</div>

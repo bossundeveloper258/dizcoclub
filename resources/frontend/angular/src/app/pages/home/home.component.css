@@ -1,0 +1,22 @@
+.background-home{
+    background-image: url('../../../assets/img/BOLA.jpg');
+    background-position: 0 100%;
+    width: 100%;
+    height: 100vh;
+    background-repeat: no-repeat;
+    background-size: 100% 40%;
+    background-color: #ff4f89;
+}
+.section-link{
+    background-color: #FFFFFF;
+    border-radius: 45px;
+    display: block;
+    color: #000;
+    font-size: 1.24rem;
+}
+.circle-avatar{
+    display: inline-block;
+    border-radius: 50%;
+    padding: 0 9px;
+    background-color: var(--bs-white);
+}
