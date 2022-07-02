@@ -15,3 +15,4 @@ yarn-error.log
 /.vscode
 /resources/frontend/angular/node_modules
 /resources/frontend/angular/dist
+composer.lock
