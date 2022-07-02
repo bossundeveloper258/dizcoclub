@@ -15,17 +15,10 @@ define('LARAVEL_START', microtime(true));
 | instead of starting the framework, which could cause an exception.
 |
 */
-if(getenv('APP_ENV') == 'production'){
-    if (file_exists(__DIR__.'/../../repositories/dizcoclub/storage/framework/maintenance.php')) {
-        require __DIR__.'/../../repositories/dizcoclub/storage/framework/maintenance.php';
-    }
-}else{
-    if (file_exists(__DIR__.'/../storage/framework/maintenance.php')) {
-        require __DIR__.'/../storage/framework/maintenance.php';
-    }
+
+if (file_exists(__DIR__.'/../storage/framework/maintenance.php')) {
+    require __DIR__.'/../storage/framework/maintenance.php';
 }
-
-
 
 /*
 |--------------------------------------------------------------------------
@@ -37,13 +30,8 @@ if(getenv('APP_ENV') == 'production'){
 | into the script here so we don't need to manually load our classes.
 |
 */
-if(getenv('APP_ENV') == 'production'){
-    require __DIR__.'/../../repositories/dizcoclub/vendor/autoload.php';
-}else{
-    require __DIR__.'/../vendor/autoload.php';
-}
 
-
+require __DIR__.'/../vendor/autoload.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -55,12 +43,8 @@ if(getenv('APP_ENV') == 'production'){
 | to this client's browser, allowing them to enjoy our application.
 |
 */
-if(getenv('APP_ENV') == 'production'){
-    $app = require_once __DIR__.'/../../repositories/dizcoclub/bootstrap/app.php';
-}else{
-    $app = require_once __DIR__.'/../bootstrap/app.php';
-}
 
+$app = require_once __DIR__.'/../bootstrap/app.php';
 
 $kernel = $app->make(Kernel::class);
 
