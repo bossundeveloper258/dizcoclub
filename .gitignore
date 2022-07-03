@@ -16,4 +16,4 @@ yarn-error.log
 /resources/frontend/angular/node_modules
 /resources/frontend/angular/dist
 composer.lock
-/public/index.php
+public/index.php
