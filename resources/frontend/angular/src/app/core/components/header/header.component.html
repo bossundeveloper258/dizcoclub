@@ -5,37 +5,51 @@
 </ng-template>
 <ul nz-menu nzMode="horizontal" class="border-0 bg-transparent text-center d-flex justify-content-center align-items-center px-2">
     <li nz-menu-item class="px-1">
-        <img src="assets/img/arrow.png" alt="" width="20px">
+        <a [routerLink]="['/events']">
+            <img src="assets/img/arrow.png" alt="" width="20px">
+        </a>
+        
     </li>
     <li nz-menu-item class="px-1 w-100">
-        <img src="assets/img/LOGO.png" alt="" width="200px">
+        <a [routerLink]="['/']">
+            <img src="assets/img/LOGO.png" alt="" width="200px">
+        </a>
+        
     </li>
-    <li nz-submenu [nzTitle]="nzSubmenuUser" class="px-1" nzMenuClassName="submenu">
+    <li nz-submenu [nzTitle]="nzSubmenuUser" class="px-1" nzMenuClassName="submenu-cdk-cont">
       <ul>
-        <li nz-menu-item>
-            <a [routerLink]="['/login']">Iniciar Sesión</a>
-        </li>
-        <li nz-menu-item>
-            <a [routerLink]="['/events']">Comprar Tickes</a>
-        </li>
-        <li nz-menu-item>
-            <a href="">Ayuda / Soporte</a>
-        </li>
-        <li nz-menu-item>
-            <a href="">Mi cuenta</a>
-        </li>
-        <li nz-menu-item>
-            <a [routerLink]="['/events']">Eventos</a>
-        </li>
-        <li nz-menu-item>
-            <a [routerLink]="['/events/add']">Agregar Evento</a>
-        </li>
-        <li nz-menu-item>
-            <a href="">Mis tickets</a>
-        </li>
-        <li nz-menu-item>
-            <a href="">Cerrar Sesión</a>
-        </li>
+        <ng-container *ngIf="!user">
+            <li nz-menu-item>
+                <a [routerLink]="['/login']">Iniciar Sesión</a>
+            </li>
+            <li nz-menu-item>
+                <a [routerLink]="['/events']">Comprar Tickes</a>
+            </li>
+            <li nz-menu-item>
+                <a href="#">Ayuda / Soporte</a>
+            </li>
+        </ng-container>
+        
+        <ng-container *ngIf="user">
+            <li nz-menu-item>
+                <a href="">Mi cuenta</a>
+            </li>
+            <li nz-menu-item>
+                <a [routerLink]="['/events']">Eventos</a>
+            </li>
+            <ng-container *ngIf="user.isadmin">
+                <li nz-menu-item>
+                    <a [routerLink]="['/events/add']">Agregar Evento</a>
+                </li>
+            </ng-container>
+            <li nz-menu-item>
+                <a href="">Mis tickets</a>
+            </li>
+            <li nz-menu-item>
+                <a href="javascript: void(0);" (click)="logout()">Cerrar Sesión</a>
+            </li>
+        </ng-container>
+       
 
       </ul>
     </li>

@@ -6,6 +6,7 @@ import { LoginComponent } from './components/login/login.component';
 import { NgZorroModule } from '../ng-zorro.module';
 import { HeaderComponent } from './components/header/header.component';
 import { MainLayoutComponent } from './components/main-layout/main-layout.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -16,6 +17,8 @@ import { MainLayoutComponent } from './components/main-layout/main-layout.compon
   ],
   imports: [
     CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
     CoreRoutingModule,
     NgZorroModule
   ]

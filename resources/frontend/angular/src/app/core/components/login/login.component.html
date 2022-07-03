@@ -2,28 +2,28 @@
     <div nz-col nzSpan="24" class="">
         <div nz-row>
             <div nz-col nzSpan="24" class="text-center px-4 mb-5">
-                <img src="assets/img/LOGO.png" alt="" class="img-fluid">
+                <img [src]="routeAsset+'/assets/img/LOGO.png'" alt="" class="img-fluid">
             </div>
             <div nz-col nzSpan="24" class="text-center px-4 mb-3">
                 <h2>INICIAR SESIÓN</h2>
             </div>
             <div nz-col nzSpan="24" class="text-center px-4 mb-1">
-                <form nz-form>
+                <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
                     <nz-form-item>
                       <nz-form-control [nzSpan]="14">
-                        <input nz-input name="email" type="email" id="email" class="form-control" placeholder="Correo / Email">
+                        <input nz-input name="email" type="email" id="email" class="form-control" placeholder="Correo / Email" formControlName="email">
                       </nz-form-control>
                     </nz-form-item >
 
                     <nz-form-item>
                         <nz-form-control [nzSpan]="14">
-                          <input nz-input name="email" type="email" id="email" class="form-control" placeholder="Contraseña">
+                          <input nz-input name="password" type="password" id="password" class="form-control" placeholder="Contraseña" formControlName="password">
                         </nz-form-control>
                     </nz-form-item >
                     <div class="text-center mb-3">
                         <a href="#" class="link-secondary">Olvidé mi contraseña</a>
                     </div>
-                    <button nz-button class="btn w-100 py-3 mb-4" [nzType]="'primary'">INGRESAR</button>
+                    <button nz-button class="btn w-100 py-3 mb-4" [nzType]="'primary'" [disabled]="loading"> <i nz-icon nzType="loading" *ngIf="loading"></i> INGRESAR</button>
                     <div class="text-center mb-3">
                         <a [routerLink]="['/']">Continuar como invitado</a>
                     </div>

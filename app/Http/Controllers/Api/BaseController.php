@@ -10,6 +10,10 @@ use App\Http\Controllers\Controller as Controller;
 
 class BaseController extends Controller
 {
+    public function __construct()
+    {
+        date_default_timezone_set('America/Lima');
+    }
     /**
      * success response method.
      *

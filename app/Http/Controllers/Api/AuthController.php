@@ -51,6 +51,7 @@ class AuthController  extends BaseController
         // if ($request->remember_me)
         //     $token->expires_at = Carbon::now()->addWeeks(1);
         // $token->save();
+        $success['user'] = $user;
         $success['token'] =  $token;
         $success['name'] =  $user->name;
 
@@ -61,9 +62,7 @@ class AuthController  extends BaseController
     {
         $request->user()->token()->revoke();
 
-        return response()->json([
-            'message' => 'Cerrar sesión con éxito'
-        ]);
+        return $this->sendResponse([], 'Cerrar sesión con éxito');
     }
 
     public function user(Request $request)

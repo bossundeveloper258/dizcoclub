@@ -1,0 +1,1 @@
+(self.webpackChunkangular=self.webpackChunkangular||[]).push([[592],{4466:(e,n,a)=>{"use strict";a.d(n,{m:()=>t});var r=a(8583),u=a(9004),s=a(7716);let t=(()=>{class e{}return e.\u0275fac=function(n){return new(n||e)},e.\u0275mod=s.oAB({type:e}),e.\u0275inj=s.cJS({imports:[[r.ez,u.V],u.V]}),e})()}}]);

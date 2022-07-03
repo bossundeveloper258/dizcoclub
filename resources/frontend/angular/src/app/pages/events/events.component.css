@@ -5,3 +5,6 @@
     border-radius: 5px;
     font-size: .85em;
 }
+.text-primary{
+    color: var(--bs-primary) !important;
+}

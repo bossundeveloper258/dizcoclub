@@ -33,11 +33,12 @@ Route::group([
     });
 });
 
+Route::get('events', [EventController::class, 'index']);
 
 Route::group([
     'prefix' => 'events',
     'middleware' => 'auth:api'
   ], function() {
-      Route::get('', [EventController::class, 'index']);
+    
       Route::post('', [EventController::class, 'store']);
 });

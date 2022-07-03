@@ -1,23 +1,23 @@
 <div nz-row class="pt-4">
     <div nz-col nzSpan="24" class="px-3">
-        <section class="bg-white mb-3">
+        <section class="bg-white mb-3" *ngFor="let event of events ">
             <a href="#" class="lh-1">
                 <div nz-row class="align-items-center">
                     <div nz-col nzSpan="8" class="h-100">
-                        <img src="assets/img/BOLA.jpg" alt="" class="img-fluid">
+                        <img [src]="routeStorage+'/'+event.avatar_path" alt="" class="img-fluid">
                     </div>
                     <div nz-col nzSpan="16" class="py-2 px-2">
                         <div class="d-flex flex-column">
-                            <p class="text-primary mb-1 lh-1">28/06/2022</p>
-                            <h5 class="mb-1 lh-1">SANTOS REGGAETON PARTY</h5>
+                            <p class="text-primary mb-1 lh-1">{{event.date}}</p>
+                            <h5 class="mb-1 lh-1">{{event.title}}</h5>
                             <div nz-row class="">
                                 <div nz-col nzSpan="10" class="">
-                                    <h5 class="m-0">S/ 50.00</h5>
+                                    <h6 class="m-0">S/ {{event.price}}</h6>
                                 </div>
                                 <div nz-col nzSpan="14" class="">
                                     <div class="d-flex justify-content-end">
-                                        <div class="preventa d-inline text-dark">
-                                            PRE VENTA 50%
+                                        <div class="preventa d-inline text-dark" *ngIf="event.isdiscount">
+                                            PRE VENTA {{event.discount}}%
                                         </div>
                                     </div>
                                 </div>
@@ -29,33 +29,5 @@
             </a>
         </section>
 
-        <section class="bg-white mb-3">
-            <a href="#" class="lh-1">
-                <div nz-row class="align-items-center">
-                    <div nz-col nzSpan="8" class="h-100">
-                        <img src="assets/img/BOLA.jpg" alt="" class="img-fluid">
-                    </div>
-                    <div nz-col nzSpan="16" class="py-2 px-2">
-                        <div class="d-flex flex-column">
-                            <p class="text-primary mb-1 lh-1">28/06/2022</p>
-                            <h5 class="mb-1 lh-1">SANTOS REGGAETON PARTY</h5>
-                            <div nz-row class="">
-                                <div nz-col nzSpan="10" class="">
-                                    <h5 class="m-0">S/ 50.00</h5>
-                                </div>
-                                <div nz-col nzSpan="14" class="">
-                                    <div class="d-flex justify-content-end">
-                                        <div class="preventa d-inline text-dark">
-                                            PRE VENTA 50%
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                    </div>
-                </div>
-            </a>
-        </section>
     </div>
 </div>

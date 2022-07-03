@@ -1,69 +1,99 @@
-<div nz-row class="pt-5">
+<div nz-row class="pt-2">
     <div nz-col nzSpan="24" class="text-center mb-5 px-3">
-        <h1>Agregar Evento</h1>
-        <form nz-form [formGroup]="validateForm" >
+        <h1 class="mb-5">Agregar Evento</h1>
+
+        <button
+      nz-button
+      nz-tooltip
+      nzTooltipTitle="prompt text"
+      nzTooltipPlacement="bottomLeft"
+      [nzTooltipArrowPointAtCenter]="true"
+    >
+      Arrow points to center / 箭头指向中心
+    </button>
+
+        <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
             <nz-form-item class="mb-2">
-              <nz-form-control >
+              <nz-form-control nzErrorTip="Campo requerido">
                 <input nz-input name="title" type="text" id="title" class="form-control" placeholder="Titulo" formControlName="title">
               </nz-form-control>
             </nz-form-item >
 
-            <nz-date-picker [(ngModel)]="date" (ngModelChange)="onChange($event)" class="mb-2 form-control" formControlName="date"></nz-date-picker>
-
+            <nz-form-item class="mb-2">
+              <nz-form-control nzErrorTip="Campo requerido">
+                <nz-date-picker [(ngModel)]="date" (ngModelChange)="onChange($event)"  class="form-control" formControlName="date" [nzDisabledDate]="disabledDate"></nz-date-picker>
+              </nz-form-control>
+            </nz-form-item >
             <nz-time-picker [(ngModel)]="time" nzFormat="HH:mm" class="mb-2 form-control" formControlName="time"></nz-time-picker>
 
-            <textarea rows="4" nz-input class="form-control mb-2" placeholder="Dirección" formControlName="address"></textarea>
+            <nz-form-item class="mb-2">
+              <nz-form-control nzErrorTip="Campo requerido">
+                <textarea rows="4" nz-input class="form-control" placeholder="Dirección" formControlName="address"></textarea>
+              </nz-form-control>
+            </nz-form-item >
 
             <textarea rows="4" nz-input class="form-control mb-2" placeholder="Descripcion" formControlName="description"></textarea>
 
             <nz-form-item class="mb-2">
-                <nz-form-control >
+                <nz-form-control nzErrorTip="Campo requerido">
                   <input nz-input name="stock" type="number" id="stock" class="form-control" placeholder="Stock" formControlName="stock">
                 </nz-form-control>
             </nz-form-item >
 
             <nz-form-item class="mb-2">
-                <nz-form-control >
+                <nz-form-control nzErrorTip="Campo requerido">
                   <input nz-input name="price" type="number" id="price" class="form-control" placeholder="Precio" formControlName="price">
                 </nz-form-control>
             </nz-form-item >
             
-            <div class="mb-2">
-                <label nz-checkbox formControlName="isdiscount">
+            <div class="mb-2 text-start">
+                <label nz-checkbox formControlName="isdiscount" (ngModelChange)="onChangeDiscount($event)">
                   <span>Descuento</span>
                 </label>
             </div>
 
-            <ng-template  *ngIf="isdiscount">
-                <nz-select class="form-control mb-2" formControlName="discount">
-                    <nz-option nzValue="jack" nzLabel="Jack"></nz-option>
-                    <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
-                    <nz-option nzValue="disabled" nzLabel="Disabled" nzDisabled></nz-option>
+            <div  *ngIf="isdiscount">
+                <nz-select class="form-control-select w-100 mb-2" formControlName="discount">
+                    <nz-option nzValue="10" nzLabel="10"></nz-option>
+                    <nz-option nzValue="20" nzLabel="20"></nz-option>
+                    <nz-option nzValue="30" nzLabel="30"></nz-option>
+                    <nz-option nzValue="40" nzLabel="40"></nz-option>
+                    <nz-option nzValue="50" nzLabel="50"></nz-option>
+                    <nz-option nzValue="60" nzLabel="60"></nz-option>
+                    <nz-option nzValue="70" nzLabel="70"></nz-option>
+                    <nz-option nzValue="80" nzLabel="80"></nz-option>
+                    <nz-option nzValue="90" nzLabel="90"></nz-option>
+                    <nz-option nzValue="100" nzLabel="100"></nz-option>
                 </nz-select>
 
                 <nz-form-item class="mb-2">
-                    <nz-form-control >
+                    <nz-form-control nzErrorTip="Campo requerido">
                       <input nz-input name="discount_stock" type="number" id="discount_stock" formControlName="discount_stock" class="form-control" placeholder="Stock Descuento">
                     </nz-form-control>
                 </nz-form-item >
-            </ng-template>
+            </div>
 
             <nz-upload
                 class="avatar-uploader"
                 nzName="avatar"
                 nzListType="picture-card"
-                [nzShowUploadList]="false"
-                
                 (nzChange)="handleChange($event)"
                 >
                 <ng-container *ngIf="!avatarUrl">
                     <i class="upload-icon" nz-icon [nzType]="loading ? 'loading' : 'plus'"></i>
-                    <div class="ant-upload-text">Upload</div>
+                    <div class="ant-upload-text">Subir Avatar</div>
                 </ng-container>
                 <img *ngIf="avatarUrl" [src]="avatarUrl" style="width: 100%" />
             </nz-upload>
 
-            <button nz-button class="btn w-100 py-3 mb-4" [nzType]="'primary'">Crear</button>
+            <nz-upload [(nzFileList)]="fileList" [nzBeforeUpload]="beforeUpload" [nzMultiple]="true">
+              <button nz-button>
+                <i nz-icon nzType="upload"></i>
+                Select File
+              </button>
+            </nz-upload>
+
+            <button nz-button class="btn w-100 py-3 mt-5 mb-4" [nzType]="'primary'">Crear</button>
             
         </form>
     </div>
