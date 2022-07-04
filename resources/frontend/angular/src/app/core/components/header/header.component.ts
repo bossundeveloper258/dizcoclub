@@ -5,6 +5,7 @@ import { StorageService } from '../../services/storage.service';
 import { NzModalService , NzModalRef } from 'ng-zorro-antd/modal';
 import { UserModel } from 'src/app/shared/models/auth.model';
 import { environment } from 'src/environments/environment';
+import { Location } from '@angular/common'
 
 @Component({
   selector: 'app-header',
@@ -20,7 +21,8 @@ export class HeaderComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     private storageService: StorageService,
-    private modalService: NzModalService
+    private modalService: NzModalService,
+    private location: Location
   ) { 
     this.user = this.storageService.getUser();
   }
@@ -43,6 +45,10 @@ export class HeaderComponent implements OnInit {
       nzOkText: "Aceptar"
     })
     
+  }
+
+  public onBack(){
+    this.location.back()
   }
 
 }

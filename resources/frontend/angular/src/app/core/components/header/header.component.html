@@ -1,11 +1,11 @@
 <ng-template #nzSubmenuUser>
     <div class="circle-avatar">
-        <img [src]="routeAsset+'/assets/img/enter.png'" alt="" width="20px">
+        <img [src]="routeAsset+'/assets/img/options.png'" alt="" width="10px">
     </div>
 </ng-template>
-<ul nz-menu nzMode="horizontal" class="border-0 bg-transparent text-center d-flex justify-content-center align-items-center px-2">
+<ul nz-menu nzMode="horizontal" class="border-0 bg-transparent text-center d-flex justify-content-center align-items-center px-4">
     <li nz-menu-item class="px-1">
-        <a [routerLink]="['/events']">
+        <a href="javascript: void(0);" (click)="onBack()">
             <img [src]="routeAsset+'/assets/img/arrow.png'" alt="" width="20px">
         </a>
         
