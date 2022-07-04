@@ -13,7 +13,7 @@ import { EventModel } from 'src/app/shared/models/event.model';
 })
 export class EventService {
 
-  private apiURL = environment.api + '/events/';
+  private apiURL = environment.api + '/events';
 
   private headers = new HttpHeaders()
     .set("Content-Type", `multipart/form-data`);
