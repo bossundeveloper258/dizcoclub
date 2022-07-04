@@ -9,6 +9,9 @@
     src: url("assets/fonts/Hanson-Bold.otf");
     src: url("assets/fonts/Hanson-Bold.ttf");
 }
+body{
+    line-height: 1.2 !important;
+}
 h1, h2, h3, h4 ,h5{
     font-family: "Hanson-Bold" !important;
 }
@@ -42,11 +45,15 @@ h1, h2, h3, h4 ,h5{
 .bg-gray{
     background-color: var(--tipme-gray);
 }
-.form-control,.form-control-select .ant-select-selector{
-    border-radius: 10px !important;
+.form-control:not(.ant-input-status-error){
     padding: 18px 12px !important;
+}
+.form-control:not(.ant-input-status-error),.form-control-select .ant-select-selector:not(.ant-select-status-error){
+    border-radius: 10px !important;
+    
     border: 0 !important;
 }
+
 
 .btn{
     height: auto !important;
@@ -59,4 +66,44 @@ h1, h2, h3, h4 ,h5{
 .submenu-cdk-cont{
     left: -150px !important;
     position: absolute !important;
+}
+
+
+.dropzone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    min-width: 80vw;
+    font-weight: 200;
+    height: 300px;
+    border: 2px dashed #f16624;
+    border-radius: 5px;
+    background: white;
+    margin: 10px 0;
+}
+
+.fileupload {
+    /* background-image: url("./assets/upload-icon.png"); */
+    background-repeat: no-repeat;
+    background-size: 100px;
+    background-position: center;
+    background-color: #ffffff;
+    height: 100px;
+    width: 100%;
+    cursor: pointer;
+    /* border: 2px dashed #0f68ff; */
+    border-radius: 6px;
+    margin-bottom: 25px;
+    background-position: center 28px;
+}
+.dropzone.hovering {
+    border: 2px solid #f16624;
+    color: #dadada !important;
+}
+.dropzone .file-label {
+    font-size: 1.2em;
+}
+progress::-webkit-progress-value {
+    transition: width 0.1s ease;
 }

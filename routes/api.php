@@ -40,5 +40,6 @@ Route::group([
     'middleware' => 'auth:api'
   ], function() {
     
-      Route::post('', [EventController::class, 'store']);
+    Route::post('', [EventController::class, 'store']);
+    Route::get('{id}', [EventController::class, 'edit']);
 });

@@ -1,0 +1,26 @@
+<div nz-row class="pt-4">
+    <div nz-col nzSpan="24" class="text-center mb-5">
+        <h2>MI CUENTA</h2>
+    </div>
+    <div nz-col nzSpan="24" class="text-center mb-5">
+        <div class="circle-avatar">
+            <img [src]="routeAsset+'/assets/img/user.png'" alt="" width="50px">
+        </div>
+    </div>
+    <div nz-col nzSpan="24" class="text-center mb-3">
+        <p class="m-2 fs-6 fw-bold">NOMBRES</p>
+        <p class="fs-5">{{user?.name}}</p>
+    </div>
+    <div nz-col nzSpan="24" class="text-center mb-3">
+        <p class="m-2 fs-6 fw-bold">DNI</p>
+        <p class="fs-5">{{user?.dni}}</p>
+    </div>
+    <div nz-col nzSpan="24" class="text-center mb-3">
+        <p class="m-2 fs-6 fw-bold">CORREO</p>
+        <p class="fs-5">{{user?.email}}</p>
+    </div>
+    <div nz-col nzSpan="24" class="text-center mb-3">
+        <p class="m-2 fs-6 fw-bold">TELÉFONO</p>
+        <p class="fs-5">{{user?.phone}}</p>
+    </div>
+</div>

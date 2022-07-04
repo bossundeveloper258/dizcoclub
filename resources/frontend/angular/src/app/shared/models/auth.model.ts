@@ -8,4 +8,6 @@ export interface UserModel{
     isadmin: boolean; 
     email: string;
     name: string;
+    phone: string;
+    dni: string;
 }

@@ -2,3 +2,24 @@
     width: 128px;
     height: 128px;
   }
+
+  .remove {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+.profile {
+    width: 40px;
+    height: 40px;
+    overflow: hidden;
+    border-radius: 4px;
+    display: inline-block;
+}
+.profile img {
+    width: 100%;
+}
+.remove img {
+    width: 15px;
+    position: relative;
+    top: -2px;
+}

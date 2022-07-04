@@ -8,7 +8,7 @@
                     </div>
                     <div nz-col nzSpan="16" class="py-2 px-2">
                         <div class="d-flex flex-column">
-                            <p class="text-primary mb-1 lh-1">{{event.date}}</p>
+                            <p class="text-primary mb-1 lh-1">{{event.date | date: 'YYYY/MM/dd'}}</p>
                             <h5 class="mb-1 lh-1">{{event.title}}</h5>
                             <div nz-row class="">
                                 <div nz-col nzSpan="10" class="">
@@ -28,6 +28,8 @@
                 </div>
             </a>
         </section>
-
+        <section *ngIf="events.length == 0" class="text-center">
+            <h2>No hay eventos disponibles</h2>
+        </section>
     </div>
 </div>

@@ -9,7 +9,7 @@ use App\Models\File;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-
+use Carbon\Carbon;
 class EventController extends BaseController
 {
     //
@@ -20,8 +20,12 @@ class EventController extends BaseController
 
     public function index()
     {
-        
-        $events = Event::with('files')->get();
+        $date = Carbon::now()->format('Y-m-d');
+        $time = Carbon::now()->format('H:i');
+        $events = Event::with('files')
+            ->where("date", ">=" , $date)
+            ->where("time", ">" , $time)
+            ->get();
         return $this->sendResponse($events, 'List');
     }
 
@@ -100,8 +104,6 @@ class EventController extends BaseController
 
                 $event->files()->attach($id_images);
                 //store your file into directory and db
-    
-                
       
             }
 
@@ -111,5 +113,15 @@ class EventController extends BaseController
         } 
 
          
+    }
+
+
+    public function edit( $id ){
+        try{
+            $event = Event::with('files')->find($id);
+            return $this->sendResponse($event, 'Evento creado correctamente');
+        } catch (\Throwable $th) {
+            return $this->sendError('Error del servidor', ['error'=> $th] , 400);
+        } 
     }
 }

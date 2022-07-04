@@ -4,6 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { StorageService } from '../../services/storage.service';
 import { NzModalService , NzModalRef } from 'ng-zorro-antd/modal';
 import { UserModel } from 'src/app/shared/models/auth.model';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-header',
@@ -13,7 +14,8 @@ import { UserModel } from 'src/app/shared/models/auth.model';
 export class HeaderComponent implements OnInit {
 
   user?: UserModel;
-
+  routeAsset = environment.assetsUrl;
+  
   constructor(
     private authService: AuthService,
     private router: Router,
@@ -21,7 +23,6 @@ export class HeaderComponent implements OnInit {
     private modalService: NzModalService
   ) { 
     this.user = this.storageService.getUser();
-    console.log(this.user, "=======")
   }
 
   ngOnInit(): void {

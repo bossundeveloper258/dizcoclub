@@ -1,0 +1,7 @@
+.circle-avatar{
+    display: inline-block;
+    border-radius: 50%;
+    padding: 15px;
+    background-color: var(--bs-white);
+    line-height: 1;
+}

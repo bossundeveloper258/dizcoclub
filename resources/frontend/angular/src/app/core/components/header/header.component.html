@@ -1,18 +1,18 @@
 <ng-template #nzSubmenuUser>
     <div class="circle-avatar">
-        <img src="assets/img/enter.png" alt="" width="20px">
+        <img [src]="routeAsset+'/assets/img/enter.png'" alt="" width="20px">
     </div>
 </ng-template>
 <ul nz-menu nzMode="horizontal" class="border-0 bg-transparent text-center d-flex justify-content-center align-items-center px-2">
     <li nz-menu-item class="px-1">
         <a [routerLink]="['/events']">
-            <img src="assets/img/arrow.png" alt="" width="20px">
+            <img [src]="routeAsset+'/assets/img/arrow.png'" alt="" width="20px">
         </a>
         
     </li>
     <li nz-menu-item class="px-1 w-100">
         <a [routerLink]="['/']">
-            <img src="assets/img/LOGO.png" alt="" width="200px">
+            <img [src]="routeAsset+'/assets/img/LOGO.png'" alt="" width="200px">
         </a>
         
     </li>
@@ -32,7 +32,7 @@
         
         <ng-container *ngIf="user">
             <li nz-menu-item>
-                <a href="">Mi cuenta</a>
+                <a [routerLink]="['/profile']">Mi cuenta</a>
             </li>
             <li nz-menu-item>
                 <a [routerLink]="['/events']">Eventos</a>
