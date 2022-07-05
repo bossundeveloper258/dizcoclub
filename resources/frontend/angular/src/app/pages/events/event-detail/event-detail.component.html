@@ -21,7 +21,7 @@
     </div>
     <div nz-col nzSpan="24" class="text-center mb-5 px-3">
         <ul class="list-unstyled p-0">
-            <li *ngFor="let file of event?.files">
+            <li *ngFor="let file of event?.files" class="mb-2">
                 <img [src]="routeStorage+'/'+file?.path" alt="" class="img-fluid">
             </li>
         </ul>
@@ -34,18 +34,18 @@
                 <h5 class="fs-6 mb-0">S/ {{event?.price}}</h5>
             </div>
             <div nz-col nzSpan="8" class="text-center">
-                <a href="#" class="circle-btn me-3">-</a>
+                <a href="javascript: void(0);" (click)="addRestar()" class="circle-btn me-3">-</a>
                 <span class=" fs-5 fw-bold lh-1">{{quantity}}</span>
-                <a href="#" class="circle-btn ms-3">+</a>
+                <a href="javascript: void(0);" (click)="addSumar()" class="circle-btn ms-3">+</a>
             </div>
             <div nz-col nzSpan="8" class="text-end">
-                <span class="fs-6">STOCK <h5 class="d-inline mb-0">{{event?.stock}}</h5></span>
+                <span class="fs-6">STOCK <h5 class="d-inline mb-0">{{event?.stock ?? 0 - quantity}}</h5></span>
             </div>
         </div>
         <div nz-row class="pt-3">
             <div nz-col nzSpan="24" class="text-start">
-                <button class="btn w-100 fs-5 py-4" nz-button [nzType]="'primary'">
-                    S/ 50.00 | COMPRAR AHORA
+                <button class="btn w-100 fs-5 py-4" nz-button [nzType]="'primary'" (click)="onSubmit()">
+                    S/ {{ total }} | COMPRAR AHORA
                 </button>
             </div>
         </div>

@@ -17,12 +17,13 @@ import { AuthService } from './core/services/auth.service';
 import { StorageService } from './core/services/storage.service';
 import { EventService } from './core/services/event.service';
 import { AuthGuardService } from './core/services/guard/auth-guard.service';
+import { OrderService } from './core/services/order.service';
 
 const antDesignIcons = AllIcons as {
   [key: string]: IconDefinition;
 };
 const icons: IconDefinition[] = Object.keys(antDesignIcons).map(key => antDesignIcons[key])
-const SERVICES  = [AuthService, StorageService, EventService];
+const SERVICES  = [AuthService, StorageService, EventService, OrderService];
 
 @NgModule({
   declarations: [

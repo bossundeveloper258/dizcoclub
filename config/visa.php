@@ -1,0 +1,11 @@
+<?php
+
+return [
+    'VISA_MERCHANT_ID' => env('VISA_MERCHANT_ID'),
+    'VISA_USER' => env('VISA_USER'),
+    'VISA_PWD' => env('VISA_PWD'),
+    'VISA_URL_SECURITY' => env('VISA_URL_SECURITY'),
+    'VISA_URL_SESSION' => env('VISA_URL_SESSION'),
+    'VISA_URL_JS' => env('VISA_URL_JS'),
+    'VISA_URL_AUTHORIZATION' => env('VISA_URL_AUTHORIZATION'),
+];

@@ -26,7 +26,17 @@ const routes: Routes = [
         {
           path: 'profile',
           loadChildren: () => import('./pages/profile/profile.module').then(m => m.ProfileModule)
-      }
+        }
+    ]
+  },
+  {
+    path: 'payment-success',
+    component: MainComponent,
+    children: [
+        {
+            path: '',
+            loadChildren: () => import('./pages/payment-success/payment-success.module').then(m => m.PaymentSuccessModule)
+        }
     ]
   }
 ];

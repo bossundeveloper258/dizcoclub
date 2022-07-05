@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Event;
 use App\Models\EventFile;
 use App\Models\File;
+use App\Models\Order;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -119,6 +120,17 @@ class EventController extends BaseController
     public function edit( $id ){
         try{
             $event = Event::with('files')->find($id);
+            $orders = Order::where('event_id', '=' , $event->id)->get();
+            $_order = array();
+            foreach ($orders as $key => $order) {
+                $_order[] = array(
+                    "q" => $order->quantity,
+                    "t" => $order->total,
+                );
+            }
+            
+            $event['orders'] = $_order;
+
             return $this->sendResponse($event, 'Evento creado correctamente');
         } catch (\Throwable $th) {
             return $this->sendError('Error del servidor', ['error'=> $th] , 400);

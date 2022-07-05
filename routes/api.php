@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\EventController;
+use App\Http\Controllers\Api\OrderController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -36,6 +37,11 @@ Route::group([
 Route::get('events', [EventController::class, 'index']);
 Route::get('events/{id}', [EventController::class, 'edit']);
 
+// Orders
+Route::post('orders/create', [OrderController::class, 'store']);
+Route::post('orders/options', [OrderController::class, 'paymentOptions']);
+Route::post('orders/payment', [OrderController::class, 'payment']);
+
 Route::group([
     'prefix' => 'events',
     'middleware' => 'auth:api'
@@ -43,4 +49,16 @@ Route::group([
     
     Route::post('', [EventController::class, 'store']);
     
+});
+
+Route::get('send-mail', function () {
+
+    $details = [
+        'title' => 'Mail from codecheef.org',
+        'body' => 'This is for testing email using smtp'
+    ];
+   
+    $mail = \Mail::to('bossun258@gmail.com')->send(new \App\Mail\MyTestMail($details));
+    var_dump(\Mail::failures());
+    dd("Email is Sent.");
 });

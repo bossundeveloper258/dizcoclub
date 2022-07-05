@@ -1,0 +1,27 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { environment } from 'src/environments/environment';
+import { StorageService } from './storage.service';
+import {errorHandler} from '../../shared/utils/functions'
+import { ResponseModal } from '../../shared/models/response.model';
+import { Observable } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class OrderService {
+  private apiURL = environment.api + '/orders';
+  constructor(
+    private httpClient: HttpClient,
+    private storageService: StorageService
+  ) { }
+
+  public postOptions(body: any): Observable<any>{
+    return this.httpClient.post<ResponseModal>(this.apiURL+"/options", body)
+    .pipe(
+      map( (res: ResponseModal ) => res.data ),
+      catchError(errorHandler)
+    );
+  }
+}

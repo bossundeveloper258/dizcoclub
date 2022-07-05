@@ -34,4 +34,5 @@ class Event extends Model
     {
         return $this->belongsToMany(File::class, 'event_files');
     }
+
 }

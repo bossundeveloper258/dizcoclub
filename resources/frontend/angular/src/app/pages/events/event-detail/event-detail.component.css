@@ -10,9 +10,9 @@
 }
 .content-change-stock{
     position: absolute;
-    top: 0;
+    top: 85px;
     left: 0;
-    height: 100vh;
+    height: calc( 100vh - 85px );
     width: 100%;
     background: transparent;
 }

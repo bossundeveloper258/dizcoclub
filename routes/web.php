@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AngularController;
+use App\Http\Controllers\Api\OrderController;
 use Illuminate\Http\Response;
 /*
 |--------------------------------------------------------------------------
@@ -32,3 +33,4 @@ Route::get('storage/{filename}', function ($filename)
  
     return $response;
 });
+

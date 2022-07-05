@@ -1,0 +1,79 @@
+<div nz-row class="pt-3">
+    <div nz-col nzSpan="24" class="text-center mb-4">
+        <h3>INVITADOS</h3>
+    </div>
+    <div nz-col nzSpan="24" class="mb-5 px-3">
+        <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
+            <div nz-row class="">
+                <div nz-col nzSpan="24" class="mb-2" formArrayName="guestList">
+                    <ng-container *ngFor="let q of guestsArray.controls;let i = index" [formGroupName]="i">
+                        <div>
+                            <div nz-row class="">
+                                <div nz-col nzSpan="24" class="mb-2">
+                                    <span>INVITADO #{{i + 1}} <span *ngIf="i == 0"><b>{{user? '(YO)' : ''}}</b> {{user? 'Haz iniciado sesión' : ''}}</span></span>
+                                </div>
+                            </div>
+                            <div nz-row class="">
+                                <div nz-col nzSpan="12" class="mb-1 pe-3">
+                                    <nz-form-item>
+                                        <nz-form-control  nzErrorTip="The input is not valid E-mail!">
+                                        <input nz-input formControlName="name" id="name" class="form-control"/>
+                                        </nz-form-control>
+                                    </nz-form-item>
+                                </div>
+                                <div nz-col nzSpan="12" class="mb-1">
+                                    <nz-form-item>
+                                        <nz-form-control  nzErrorTip="The input is not valid E-mail!">
+                                        <input nz-input formControlName="lastname" id="lastname" class="form-control"/>
+                                        </nz-form-control>
+                                    </nz-form-item>
+                                </div>
+                            </div>
+                            <div nz-row class="">
+                                <div nz-col nzSpan="24" class="mb-2">
+                                    <nz-form-item>
+                                        <nz-form-control  nzErrorTip="The input is not valid E-mail!">
+                                        <input nz-input formControlName="dni" id="dni" class="form-control"/>
+                                        </nz-form-control>
+                                    </nz-form-item>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+            <div nz-row class="">
+                <div nz-col nzSpan="24" class="mb-2">
+                    <button class="btn w-100 fs-5 py-4" nz-button [nzType]="'primary'">
+                        S/ 50.00 | CONTINUAR COMPRA
+                    </button>
+                </div>
+            </div>
+            <div >
+                <script type="text/javascript" src="https://static-content-qas.vnforapps.com/v2/js/checkout.js" > </script>
+
+                <script type="text/javascript">
+                function openForm() {
+                VisanetCheckout.configure({
+                    sessiontoken:"{{session}}",
+                    channel:'web',
+                    merchantid:"{{merchantid}}",
+                    purchasenumber:"{{purchaseNumber}}",
+                    amount:'10.5',
+                    expirationminutes:'20',
+                    timeouturl:'about:blank',
+                    merchantlogo:'img/comercio.png',
+                    formbuttoncolor:'#000000',
+                    action:'https://dizcoclub.com/api/orders/payment',
+                    complete: function(params) {
+                        alert(JSON.stringify(params));
+                    }
+                });
+                VisanetCheckout.open();
+                }
+                </script>
+                
+            </div>
+        </form>
+    </div>
+</div>
