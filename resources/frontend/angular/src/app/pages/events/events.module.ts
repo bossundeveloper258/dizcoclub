@@ -10,11 +10,13 @@ import {HttpClientModule} from '@angular/common/http';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { EventDetailComponent } from './event-detail/event-detail.component';
 
 @NgModule({
   declarations: [
     EventsComponent,
-    EventAddComponent
+    EventAddComponent,
+    EventDetailComponent
   ],
   imports: [
     CommonModule,

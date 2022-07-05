@@ -1,7 +1,7 @@
 <div nz-row class="pt-4">
     <div nz-col nzSpan="24" class="px-3">
         <section class="bg-white mb-3" *ngFor="let event of events ">
-            <a href="#" class="lh-1">
+            <a [routerLink]="['/events/detail', event.id]" class="lh-1 d-block">
                 <div nz-row class="align-items-center">
                     <div nz-col nzSpan="8" class="h-100">
                         <img [src]="routeStorage+'/'+event.avatar_path" alt="" class="img-fluid">
