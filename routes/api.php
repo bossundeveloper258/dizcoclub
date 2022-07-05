@@ -34,6 +34,7 @@ Route::group([
 });
 
 Route::get('events', [EventController::class, 'index']);
+Route::get('events/{id}', [EventController::class, 'edit']);
 
 Route::group([
     'prefix' => 'events',
@@ -41,5 +42,5 @@ Route::group([
   ], function() {
     
     Route::post('', [EventController::class, 'store']);
-    Route::get('{id}', [EventController::class, 'edit']);
+    
 });
