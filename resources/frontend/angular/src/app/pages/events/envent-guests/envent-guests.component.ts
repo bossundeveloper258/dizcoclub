@@ -72,22 +72,7 @@ export class EnventGuestsComponent implements OnInit {
   }
 
   submitForm(){
-    VisanetCheckout.configure({
-        sessiontoken:this.session,
-        channel:'web',
-        merchantid:this.merchantid,
-        purchasenumber:this.purchaseNumber,
-        amount:'10.5',
-        expirationminutes:'20',
-        timeouturl:'about:blank',
-        merchantlogo:'img/comercio.png',
-        formbuttoncolor:'#000000',
-        action:'http://127.0.0.1:8000/api/orders/payment',
-        complete: function(params: any) {
-            alert(JSON.stringify(params));
-        }
-    });
-    VisanetCheckout.open();
+    
   }
 
 }
