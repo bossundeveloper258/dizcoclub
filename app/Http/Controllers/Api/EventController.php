@@ -24,7 +24,7 @@ class EventController extends BaseController
         $time = Carbon::now()->format('H:i');
         $events = Event::with('files')
             ->where("date", ">=" , $date)
-            ->where("time", ">" , $time)
+            // ->where("time", ">" , $time)
             ->get();
         return $this->sendResponse($events, 'List');
     }
