@@ -53,9 +53,24 @@
             </div>
         </div>
         <div >
-            <script type="text/javascript" src="https://static-content-qas.vnforapps.com/v2/js/checkout.js" > </script>
 
-            <script type="text/javascript">
+            <form action="paginaRespuesta" method="post">
+
+                <script type="text/javascript" src="https://static-content-qas.vnforapps.com/v2/js/checkout.js"
+                  data-sessiontoken="{{session}}"
+                  data-channel="web"
+                  data-merchantid="{{merchantid}}"
+                  data-purchasenumber="{{purchaseNumber}}"
+                  data-amount="10.5"
+                  data-expirationminutes="20"
+                  data-timeouturl="about:blank"
+                  data-merchantlogo="img/comercio.png"
+                  data-formbuttoncolor="#000000"
+                > </script>
+            </form>
+            <!-- <script type="text/javascript" src="https://static-content-qas.vnforapps.com/v2/js/checkout.js" > </script> -->
+
+            <!-- <script type="text/javascript">
             function openForm() {
                 VisanetCheckout.configure({
                     sessiontoken:"{{session}}",
@@ -74,7 +89,7 @@
                 });
                 VisanetCheckout.open();
             }
-            </script>
+            </script> -->
             
         </div>
     </div>
