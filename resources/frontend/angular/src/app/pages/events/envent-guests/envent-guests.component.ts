@@ -83,17 +83,19 @@ export class EnventGuestsComponent implements OnInit {
   }
 
   submitForm(){
-    if (this.validateForm.get('guestList')?.valid) {
+
+    if (this.isFormValid()) {
 
       const _body = this.validateForm.get('guestList')?.value;
+
       let body = [];
-      if(this.user){
+      if(this.user && this.quantity > 1 ){
         let g = [
           { name: this.user?.name , lastname: "" , email: this.user?.email, dni: this.user?.dni}
         ]
         body = g.concat(_body);
       }else{
-        body = _body
+        body = _body;
       }
 
       this.orderService.postCreate({
@@ -140,13 +142,13 @@ export class EnventGuestsComponent implements OnInit {
 
       
     } else {
-      console.log("error")
+      console.log("error Validate")
       const control = this.validateForm.get('guestList') as FormArray;
       for (const i in control.controls) {
         const controlTwo = control.controls[i] as FormGroup;
         
         for (const k in controlTwo.controls) {
-          console.log(controlTwo.controls[k])
+          
           controlTwo.controls[k].markAsDirty();
           controlTwo.controls[k].updateValueAndValidity({onlySelf:false});
         }
@@ -154,6 +156,10 @@ export class EnventGuestsComponent implements OnInit {
       
     }
   
+  }
+
+  isFormValid() : boolean { 
+    return this.validateForm.disabled ? true : this.validateForm.valid
   }
 
 }
