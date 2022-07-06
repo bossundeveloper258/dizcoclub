@@ -14,4 +14,10 @@ export interface EventModel{
     discount?: number;
     discount_stock?: number;
     files: FileModel[];
+    orders: OrderEvent[];
+}
+
+interface OrderEvent{
+    q: number;
+    t: string;
 }

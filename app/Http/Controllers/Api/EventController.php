@@ -120,7 +120,9 @@ class EventController extends BaseController
     public function edit( $id ){
         try{
             $event = Event::with('files')->find($id);
-            $orders = Order::where('event_id', '=' , $event->id)->get();
+            $orders = Order::select('orders.*')
+                ->join('order_payments', 'order_payments.order_id', '=', 'orders.id')    
+                ->where('event_id', '=' , $event->id)->get();
             $_order = array();
             foreach ($orders as $key => $order) {
                 $_order[] = array(

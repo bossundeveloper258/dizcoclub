@@ -6,7 +6,8 @@ export const environment = {
   production: false,
   api: "http://127.0.0.1:8000/api",
   assetsUrl : "http://localhost:4200",
-  storageUrl : "http://127.0.0.1:8000/storage"
+  storageUrl : "http://127.0.0.1:8000/storage",
+  urlHost: "http://127.0.0.1:8000"
 };
 
 /*

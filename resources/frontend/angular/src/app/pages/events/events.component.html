@@ -1,4 +1,4 @@
-<div nz-row class="pt-4">
+<div nz-row class="pt-4" *ngIf="!loading">
     <div nz-col nzSpan="24" class="px-3">
         <section class="bg-white mb-3" *ngFor="let event of events ">
             <a [routerLink]="['/events/detail', event.id]" class="lh-1 d-block">
@@ -33,3 +33,4 @@
         </section>
     </div>
 </div>
+<app-loading [loading]="loading"></app-loading>

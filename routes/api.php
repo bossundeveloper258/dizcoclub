@@ -41,6 +41,7 @@ Route::get('events/{id}', [EventController::class, 'edit']);
 Route::post('orders/create', [OrderController::class, 'store']);
 Route::post('orders/options', [OrderController::class, 'paymentOptions']);
 Route::post('orders/payment', [OrderController::class, 'payment']);
+Route::post('orders/success', [OrderController::class, 'paymentSuccess']);
 
 Route::group([
     'prefix' => 'events',

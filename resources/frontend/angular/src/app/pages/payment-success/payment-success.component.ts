@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -8,7 +9,14 @@ import { environment } from 'src/environments/environment';
 })
 export class PaymentSuccessComponent implements OnInit {
   routeAsset = environment.assetsUrl;
-  constructor() { }
+  token!: string;
+  constructor(
+    private activatedRoute: ActivatedRoute,
+  ) { 
+    this.activatedRoute.paramMap.subscribe( paramMap => {
+      this.token = paramMap.get('id') ?? "";
+    });
+  }
 
   ngOnInit(): void {
   }

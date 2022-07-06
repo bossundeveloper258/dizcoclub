@@ -18,8 +18,8 @@ class CreateEventsTable extends Migration
             $table->string('title');
             $table->date('date');
             $table->time('time');
-            $table->string('address');
-            $table->string('description');
+            $table->text('address');
+            $table->text('description');
             $table->string('avatar_name');
             $table->string('avatar_path');
             $table->integer('stock');

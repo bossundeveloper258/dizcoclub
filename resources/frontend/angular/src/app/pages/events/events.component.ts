@@ -12,14 +12,20 @@ export class EventsComponent implements OnInit {
 
   events: EventModel[] = [];
   routeStorage = environment.storageUrl;
+  loading: boolean = true;
   constructor(
     private eventService: EventService
   ) { }
 
   ngOnInit(): void {
+    this.loading = true;
     this.eventService.getAll().subscribe(
       res => {
+        this.loading = false;
         this.events = res;
+      },
+      error => {
+        this.loading = false;
       }
     )
   }

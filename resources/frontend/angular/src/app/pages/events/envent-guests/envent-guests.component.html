@@ -7,35 +7,51 @@
             <div nz-row class="">
                 <div nz-col nzSpan="24" class="mb-2" formArrayName="guestList">
                     <ng-container *ngFor="let q of guestsArray.controls;let i = index" [formGroupName]="i">
-                        <div>
+                        <div class="mb-2">
                             <div nz-row class="">
                                 <div nz-col nzSpan="24" class="mb-2">
-                                    <span>INVITADO #{{i + 1}} <span *ngIf="i == 0"><b>{{user? '(YO)' : ''}}</b> {{user? 'Haz iniciado sesión' : ''}}</span></span>
+                                    <span>INVITADO #{{i + 1}} <span *ngIf="i == 0"><b>(YO)</b> {{user? 'Haz iniciado sesión' : ''}}</span></span>
+                                    <p class="mb-0" *ngIf="!user && i == 0"> Continua como invitado o <a [routerLink]="['/login']">Ingresa a tu cuenta</a></p>
+
                                 </div>
                             </div>
                             <div nz-row class="">
                                 <div nz-col nzSpan="12" class="mb-1 pe-3">
-                                    <nz-form-item>
-                                        <nz-form-control  nzErrorTip="The input is not valid E-mail!">
-                                        <input nz-input formControlName="name" id="name" class="form-control"/>
+                                    <nz-form-item class="mb-0">
+                                        <nz-form-control  nzErrorTip="Campo requerido">
+                                        <input nz-input formControlName="name" id="name" class="form-control" placeholder="Nombre"/>
                                         </nz-form-control>
                                     </nz-form-item>
                                 </div>
                                 <div nz-col nzSpan="12" class="mb-1">
-                                    <nz-form-item>
-                                        <nz-form-control  nzErrorTip="The input is not valid E-mail!">
-                                        <input nz-input formControlName="lastname" id="lastname" class="form-control"/>
+                                    <nz-form-item class="mb-0">
+                                        <nz-form-control  nzErrorTip="Campo requerido">
+                                        <input nz-input formControlName="lastname" id="lastname" class="form-control" placeholder="Apellido"/>
+                                        </nz-form-control>
+                                    </nz-form-item>
+                                </div>
+                            </div>
+                            <div nz-row class="" *ngIf=" i == 0">
+                                <div nz-col nzSpan="24" class="mb-2">
+                                    <nz-form-item class="mb-0">
+                                        <nz-form-control  nzErrorTip="Campo requerido">
+                                            <input nz-input formControlName="email" id="email" class="form-control" placeholder="Email" />
                                         </nz-form-control>
                                     </nz-form-item>
                                 </div>
                             </div>
                             <div nz-row class="">
                                 <div nz-col nzSpan="24" class="mb-2">
-                                    <nz-form-item>
-                                        <nz-form-control  nzErrorTip="The input is not valid E-mail!">
-                                        <input nz-input formControlName="dni" id="dni" class="form-control"/>
+                                    <nz-form-item class="mb-0">
+                                        <nz-form-control  [nzErrorTip]="errorDNI">
+                                        <input nz-input formControlName="dni" id="dni" class="form-control" placeholder="DNI"/>
                                         </nz-form-control>
                                     </nz-form-item>
+                                    <ng-template #errorDNI let-control>
+                                        <ng-container *ngIf="control.hasError('required')">Campo requerido</ng-container>
+                                        <ng-container *ngIf="control.hasError('maxLength')">Campo DNi solo requiere 8 digitos</ng-container>
+                                        <ng-container *ngIf="control.hasError('pattern')">Campo DNi solo requiere números</ng-container>
+                                    </ng-template>
                                 </div>
                             </div>
                         </div>
@@ -47,50 +63,11 @@
 
         <div nz-row class="">
             <div nz-col nzSpan="24" class="mb-2">
-                <button class="btn w-100 fs-5 py-4" nz-button [nzType]="'primary'" onclick="openForm()">
-                    S/ 50.00 | CONTINUAR COMPRA
+                <button class="btn w-100 fs-5 py-4" nz-button [nzType]="'primary'" (click)="submitForm()">
+                    S/ {{total}} | CONTINUAR COMPRA
                 </button>
             </div>
         </div>
-        <div >
 
-            <form action="paginaRespuesta" method="post">
-
-                <script type="text/javascript" src="https://static-content-qas.vnforapps.com/v2/js/checkout.js"
-                  data-sessiontoken="{{session}}"
-                  data-channel="web"
-                  data-merchantid="{{merchantid}}"
-                  data-purchasenumber="{{purchaseNumber}}"
-                  data-amount="10.5"
-                  data-expirationminutes="20"
-                  data-timeouturl="about:blank"
-                  data-merchantlogo="img/comercio.png"
-                  data-formbuttoncolor="#000000"
-                > </script>
-            </form>
-            <!-- <script type="text/javascript" src="https://static-content-qas.vnforapps.com/v2/js/checkout.js" > </script> -->
-
-            <!-- <script type="text/javascript">
-            function openForm() {
-                VisanetCheckout.configure({
-                    sessiontoken:"{{session}}",
-                    channel:'web',
-                    merchantid:"{{merchantid}}",
-                    purchasenumber:"{{purchaseNumber}}",
-                    amount:'10.5',
-                    expirationminutes:'20',
-                    timeouturl:'about:blank',
-                    merchantlogo:'img/comercio.png',
-                    formbuttoncolor:'#000000',
-                    action:'https://dizcoclub.com/api/orders/payment',
-                    complete: function(params) {
-                        alert(JSON.stringify(params));
-                    }
-                });
-                VisanetCheckout.open();
-            }
-            </script> -->
-            
-        </div>
     </div>
 </div>

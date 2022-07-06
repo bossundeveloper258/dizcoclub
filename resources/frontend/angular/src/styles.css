@@ -45,7 +45,7 @@ h1, h2, h3, h4 ,h5{
 .bg-gray{
     background-color: var(--tipme-gray);
 }
-.form-control:not(.ant-input-status-error){
+.form-control{
     padding: 18px 12px !important;
 }
 .form-control:not(.ant-input-status-error),.form-control-select .ant-select-selector:not(.ant-select-status-error){
@@ -54,7 +54,9 @@ h1, h2, h3, h4 ,h5{
     border: 0 !important;
 }
 
-
+.anticon-loading svg{
+    fill: var(--bs-primary) !important;
+}
 .btn{
     height: auto !important;
     border-radius: 10px !important;

@@ -12,12 +12,14 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./event-detail.component.css']
 })
 export class EventDetailComponent implements OnInit {
-
+  loading: boolean = true;
   eventId: string = '';
   routeStorage = environment.storageUrl;
-  event?: EventModel;
+  event!: EventModel;
   quantity: number = 1;
   total: string = "";
+  stockTotal: number = 0;
+  loadingBtn: boolean = false;
 
   constructor(
     private eventService: EventService,
@@ -30,8 +32,6 @@ export class EventDetailComponent implements OnInit {
       this.eventId = paramMap.get('id') ?? "";
     });
 
-    
-    localStorage.removeItem("q");
    }
 
   ngOnInit(): void {
@@ -39,37 +39,69 @@ export class EventDetailComponent implements OnInit {
   }
 
   setData(): void {
+    this.loading = true;
     this.eventService.getById(this.eventId).subscribe(
       res => {
         this.event = res;
         this.calculateTotal();
+        this.loading = false;
+        let _totalSctock = this.event.orders.reduce((c, obj) => { return c + obj.q } ,0);
+        this.stockTotal = this.event.stock - _totalSctock;
+      },
+      error => {
+        this.loading = false;
       }
     )
   }
 
   addSumar(){
-    this.quantity = this.quantity + 1;
-    this.calculateTotal();
+    if( this.stockTotal != 0){
+      this.quantity = this.quantity + 1;
+      this.calculateTotal();
+      this.stockTotal -= 1;
+    }
   }
 
   addRestar(){
     if( this.quantity > 1){
       this.quantity = this.quantity -1;
       this.calculateTotal();
+      this.stockTotal += 1;
     }
   }
 
   calculateTotal(){
-    this.total = (this.quantity * parseFloat(this.event?.price ?? "0")).toString();
+    if( this.event?.isdiscount){
+      this.total = (this.quantity * parseFloat(this.event?.price ?? "0") *( 1 - ( (this.event?.discount ?? 100) / 100) ) ).toString();
+    }else{
+      this.total = (this.quantity * parseFloat(this.event?.price ?? "0")).toString();
+    }
+
+    this.total = parseFloat(this.total).toFixed(2);
+    
   }
 
   onSubmit(){
-    this.orderService.postOptions({total: this.quantity}).subscribe(
+    this.loadingBtn = true;
+    this.orderService.postOptions({total: this.quantity, event_id: this.eventId}).subscribe(
       res => {
-        console.log(res)
-        localStorage.setItem("q", this.quantity.toString());
         this.route.navigate(['events/detail/'+this.eventId+'/guests'] , {
-          queryParams: {session: res.session, purchaseNumber: res.purchaseNumber,merchantid:res.merchantid}
+          queryParams: {
+            s: res.session, 
+            p: res.purchaseNumber,
+            m: res.merchantid,
+            e: this.eventId,
+            q: this.quantity,
+            t: res.totalAmount
+          }
+        });
+        this.loadingBtn = false;
+      },
+      error =>{
+        this.loadingBtn = false;
+        this.modalService.info({
+          nzTitle: "Info",
+          nzContent: error.message
         });
       }
     )

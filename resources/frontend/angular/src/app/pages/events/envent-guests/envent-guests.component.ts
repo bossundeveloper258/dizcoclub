@@ -1,9 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Renderer2 } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { NzModalService } from 'ng-zorro-antd/modal';
 import { OrderService } from 'src/app/core/services/order.service';
+import { ScriptService } from 'src/app/core/services/script.service';
 import { StorageService } from 'src/app/core/services/storage.service';
 import { UserModel } from 'src/app/shared/models/auth.model';
+import { environment } from 'src/environments/environment';
 
 
 declare var VisanetCheckout: any;
@@ -22,24 +25,31 @@ export class EnventGuestsComponent implements OnInit {
   session!: string;
   purchaseNumber!: string;
   merchantid!: string;
+  total!: number;
+  urlHost= environment.urlHost;
+  eventId!: number;
 
   constructor(
     private fb: FormBuilder,
     private storageService: StorageService,
     private orderService: OrderService,
     private activatedRoute: ActivatedRoute,
+    private modalService: NzModalService,
+    private renderer: Renderer2,
+    private scriptService: ScriptService
   ) {
 
     this.activatedRoute.queryParams
       .subscribe(params => {
-        console.log(params); // { orderby: "price" }
-        this.session = params.session;
-        this.purchaseNumber = params.purchaseNumber;
-        this.merchantid = params.merchantid;
+
+        this.session = params.s;
+        this.purchaseNumber = params.p;
+        this.merchantid = params.m;
+        this.quantity = params.q;
+        this.total = params.t
+        this.eventId = params.e;
       }
     );
-
-    this.quantity = parseInt(localStorage.getItem("q") ?? "0");
 
     this.user = this.storageService.getUser(); 
 
@@ -48,31 +58,91 @@ export class EnventGuestsComponent implements OnInit {
         this.fb.group({
           name: [{value: this.user?.name ?? "" , disabled: this.user? true: false} , [Validators.required]],
           lastname: [{value: "" , disabled: this.user? true: false} , [Validators.required]],
-          dni: [{value: this.user?.dni ?? "" , disabled: this.user? true: false} , [Validators.required]]
+          email: [{value: this.user?.email ?? "" , disabled: this.user? true: false} , [Validators.required]],
+          dni: [{value: this.user?.dni ?? "" , disabled: this.user? true: false} , [Validators.required, Validators.maxLength(8), Validators.pattern("^[0-9]*$")]]
         })
       ])
     });
-    if(this.quantity > 0){
-      this.guestsArray = this.validateForm.get('guestList') as FormArray;
-
-      let formGroup:FormGroup = this.fb.group({
-        name: this.fb.control("" , [Validators.required]),
-        lastname: this.fb.control("" , [Validators.required]),
-        dni: this.fb.control("" , [Validators.required])
-      });
-      for (let i = 1; i <= this.quantity; i++) {
-        this.guestsArray.push(formGroup);
-      }
-    }
+    
+    this.guestsArray = this.validateForm.get('guestList') as FormArray;
 
   }
 
   ngOnInit(): void {
-    
+    if(this.quantity > 1){
+      const formGroup:FormGroup = this.fb.group({
+        name: ["" , [Validators.required]],
+        lastname: ["" , [Validators.required]],
+        dni: ["" , [Validators.required, Validators.maxLength(8), Validators.pattern("^[0-9]*$")]]
+      });
+      for (let i = 1; i <= this.quantity - 1; i++) {
+        this.guestsArray.push(formGroup);
+      }
+      
+    }
   }
 
   submitForm(){
-    
+    if (this.validateForm.get('guestList')?.valid) {
+      console.log(this.validateForm.get('guestList')?.value)
+
+      this.orderService.postCreate({
+        event_id : this.eventId,
+        quantity : this.quantity,
+        clients: this.validateForm.get('guestList')?.value
+      }).subscribe(
+        (res) => {
+
+          const scriptElement = this.scriptService.loadJsScript(this.renderer, "https://static-content-qas.vnforapps.com/v2/js/checkout.js");
+          scriptElement.onload = () => {
+        
+            VisanetCheckout.configure({
+              sessiontoken:this.session,
+              channel:'web',
+              merchantid:this.merchantid,
+              purchasenumber:this.purchaseNumber,
+              amount:this.total,
+              expirationminutes:'20',
+              timeouturl:'about:blank',
+              merchantlogo:this.urlHost+'/assets/angular/assets/img/LOGO.png',
+              formbuttoncolor:'#000000',
+              action: this.urlHost+'/api/orders/payment?o='+res.order,
+              complete: function(params: any) {
+                console.log(params)
+                alert(JSON.stringify(params));
+              }
+            });
+            VisanetCheckout.open();
+
+          }
+          scriptElement.onerror = () => {
+            
+          }
+        },
+        (error) => {
+          this.modalService.info({
+            nzTitle: "Info",
+            nzContent: error.message
+          });
+        }
+      );
+
+      
+    } else {
+      console.log("error")
+      const control = this.validateForm.get('guestList') as FormArray;
+      for (const i in control.controls) {
+        const controlTwo = control.controls[i] as FormGroup;
+        
+        for (const k in controlTwo.controls) {
+          console.log(controlTwo.controls[k])
+          controlTwo.controls[k].markAsDirty();
+          controlTwo.controls[k].updateValueAndValidity({onlySelf:false});
+        }
+      }
+      
+    }
+  
   }
 
 }

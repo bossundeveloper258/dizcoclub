@@ -5,23 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class OrderGuests extends Model
+class OrderPayments extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'id',
-        'ticket',
-        'order_id',
-        'name', 
-        'lastname',
-        'email',
-        'dni', 
-        'hash',
-        'qr_path'
+        'transactionToken',
+        'customerEmail',
+        'order_id', 
     ];
 
     protected $hidden = [
-        'created_at', 'updated_at', 'id'
+        'created_at', 'updated_at'
     ];
 }

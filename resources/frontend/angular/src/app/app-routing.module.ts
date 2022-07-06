@@ -30,7 +30,7 @@ const routes: Routes = [
     ]
   },
   {
-    path: 'payment-success',
+    path: 'payment-success/:token',
     component: MainComponent,
     children: [
         {

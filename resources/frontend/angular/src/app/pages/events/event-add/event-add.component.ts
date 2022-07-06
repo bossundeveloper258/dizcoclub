@@ -197,14 +197,14 @@ export class EventAddComponent implements OnInit {
                       this.router.navigate(['/events']);
                     }
                   })
-                  
                 },
                 error => {
                   console.log(error)
                   this.modalService.error({
                     nzTitle: "Error",
-                    nzContent: error
+                    nzContent: error.message
                   })
+                  this.loadingBtn = false;
                 }
               )
 

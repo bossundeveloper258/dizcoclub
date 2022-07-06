@@ -24,4 +24,12 @@ export class OrderService {
       catchError(errorHandler)
     );
   }
+
+  public postCreate(body: any): Observable<any>{
+    return this.httpClient.post<ResponseModal>(this.apiURL+"/create", body)
+    .pipe(
+      map( (res: ResponseModal ) => res.data ),
+      catchError(errorHandler)
+    );
+  }
 }
