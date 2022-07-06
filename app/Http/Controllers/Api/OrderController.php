@@ -79,7 +79,7 @@ class OrderController extends BaseController
                 }
             }
 
-            $userId = $request->user_id ? false : $request->user_id;
+            $userId = $request->user_id;
 
             $cryp_event = Crypt::encryptString(json_encode($event));
             
