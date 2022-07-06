@@ -3,16 +3,46 @@
     <div nz-col nzSpan="24" class="">
         <div nz-row>
             <div nz-col nzSpan="24" class="text-end mb-5">
-                
-
+            
                 <ul nz-menu nzMode="horizontal" class="border-0 bg-transparent text-end pe-4">
-                    <li nz-menu-item class="px-1">
-                        <a [routerLink]="['/login']" rel="noopener noreferrer">
+                    <ng-container *ngIf="!user">
+                        <li nz-menu-item class="px-1">
+                            <a [routerLink]="['/login']" rel="noopener noreferrer">
+                                <div class="circle-avatar">
+                                    <img [src]="routeAsset+'/assets/img/enter.png'" alt="" width="20px">
+                                </div>
+                            </a>
+                        </li>
+                    </ng-container>
+                    <ng-container *ngIf="user">
+                        <ng-template #nzSubmenuUser>
                             <div class="circle-avatar">
                                 <img [src]="routeAsset+'/assets/img/user.png'" alt="" width="20px">
                             </div>
-                        </a>
-                    </li>
+                        </ng-template>
+                        <li nz-submenu [nzTitle]="nzSubmenuUser" class="px-1" nzMenuClassName="submenu-cdk-cont">
+                            <ul>
+                                <li nz-menu-item>
+                                    <a [routerLink]="['/profile']">Mi cuenta</a>
+                                </li>
+                                <li nz-menu-item>
+                                    <a [routerLink]="['/events']">Eventos</a>
+                                </li>
+                                <ng-container *ngIf="user.isadmin">
+                                    <li nz-menu-item>
+                                        <a [routerLink]="['/events/add']">Agregar Evento</a>
+                                    </li>
+                                </ng-container>
+                                <li nz-menu-item>
+                                    <a href="">Mis tickets</a>
+                                </li>
+                                <li nz-menu-item>
+                                    <a href="javascript: void(0);" (click)="logout()">Cerrar Sesión</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ng-container>
+                    
                     <li nz-menu-item class="px-1">
                         <a [routerLink]="['/']" target="_blank" rel="noopener noreferrer">
                             <div class="circle-avatar">

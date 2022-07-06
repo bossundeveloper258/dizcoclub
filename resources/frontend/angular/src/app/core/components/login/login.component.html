@@ -23,7 +23,7 @@
                                 </nz-form-control>
                             </nz-form-item >
                             <div class="text-center mb-3">
-                                <a href="#" class="link-secondary">Olvidé mi contraseña</a>
+                                <a [routerLink]="['/register']" class="link-secondary">Registrarse si no tengo una cuenta</a>
                             </div>
                             <button nz-button class="btn w-100 py-3 mb-4" [nzType]="'primary'" [disabled]="loading"> <i nz-icon nzType="loading" *ngIf="loading"></i> INGRESAR</button>
                             <div class="text-center mb-3">

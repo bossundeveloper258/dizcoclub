@@ -84,12 +84,23 @@ export class EnventGuestsComponent implements OnInit {
 
   submitForm(){
     if (this.validateForm.get('guestList')?.valid) {
-      console.log(this.validateForm.get('guestList')?.value)
+
+      const _body = this.validateForm.get('guestList')?.value;
+      let body = [];
+      if(this.user){
+        let g = [
+          { name: this.user?.name , lastname: "" , email: this.user?.email, dni: this.user?.dni}
+        ]
+        body = g.concat(_body);
+      }else{
+        body = _body
+      }
 
       this.orderService.postCreate({
         event_id : this.eventId,
         quantity : this.quantity,
-        clients: this.validateForm.get('guestList')?.value
+        user_id : this.user?.id ?? null,
+        clients: body
       }).subscribe(
         (res) => {
 

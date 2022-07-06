@@ -40,6 +40,14 @@ export class AuthService {
     );
   }
 
+  public resgiter(body:any): Observable<AuthModel>{
+    return this.httpClient.post<ResponseModal>(this.apiURL + 'signup', body , {headers: this.headers})
+    .pipe(
+      map( (res: ResponseModal ) => res.data ),
+      catchError(errorHandler)
+    );
+  }
+
   public isAuthenticated(): boolean {
     // get the token
     const token = this.storageService.getToken();

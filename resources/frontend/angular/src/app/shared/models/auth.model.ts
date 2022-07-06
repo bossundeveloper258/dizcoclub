@@ -5,6 +5,7 @@ export interface AuthModel{
 }
 
 export interface UserModel{
+    id: number;
     isadmin: boolean; 
     email: string;
     name: string;

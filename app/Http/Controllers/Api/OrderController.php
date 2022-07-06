@@ -37,7 +37,7 @@ class OrderController extends BaseController
             'quantity' => 'required',
             'clients' => 'present|array',
             'clients.*.name' => 'required|string',
-            'clients.*.lastname' => 'required|string',
+            // 'clients.*.lastname' => 'required|string',
             'clients.*.dni' => 'required|string',
         ]);
         
@@ -78,7 +78,7 @@ class OrderController extends BaseController
                 }
             }
 
-            $userId = Auth::id();
+            $userId = $request->user_id ? false : $request->user_id;
 
             $cryp_event = Crypt::encryptString(json_encode($event));
             
@@ -99,7 +99,7 @@ class OrderController extends BaseController
                 $order_g = OrderGuests::create([
                     'order_id'  => $order_new->id,
                     'name'      => $g['name'], 
-                    'lastname'  => $g['lastname'],
+                    'lastname'  => isset($g['lastname']) ? $g['lastname'] : "",
                     'email'     => isset($g['email']) ? $g['email'] : "",
                     'dni'       => $g['dni'], 
                     'hash'      => $_token,
@@ -245,6 +245,11 @@ class OrderController extends BaseController
         } catch (DecryptException $e) {
             return $this->sendError('No existe este pago', ['error'=> []] , 400);
         }
+
+    }
+
+    public function tickets()
+    {
 
     }
 

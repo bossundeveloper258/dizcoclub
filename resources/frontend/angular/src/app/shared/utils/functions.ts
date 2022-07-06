@@ -10,4 +10,4 @@ export function errorHandler(error: any) {
       errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
     }
     return throwError(error.error);
- }
+}

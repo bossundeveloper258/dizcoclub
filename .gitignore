@@ -17,3 +17,4 @@ yarn-error.log
 /resources/frontend/angular/dist
 composer.lock
 /public/index.php
+/public/qrcodes

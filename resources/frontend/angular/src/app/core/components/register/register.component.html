@@ -1,0 +1,67 @@
+<div class="bg-gray full-scren-h">
+    <div style="max-width: 550px;margin: 0 auto;">
+        <div nz-row class="bg-gray full-scren-h align-items-center" >
+            <div nz-col nzSpan="24" class="">
+                <div nz-row>
+                    <div nz-col nzSpan="24" class="text-center px-4 mb-3">
+                        <h2>CREAR UNA CUENTA</h2>
+                    </div>
+                    <div nz-col nzSpan="24" class="text-center px-4 mb-1">
+                        <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
+                            <nz-form-item>
+                                <nz-form-control nzErrorTip="Campo requerido">
+                                  <input nz-input name="name" type="text" id="name" class="form-control" placeholder="Nombres" formControlName="name">
+                                </nz-form-control>
+                            </nz-form-item >
+
+                            <nz-form-item>
+                              <nz-form-control [nzErrorTip]="errorEmail">
+                                <input nz-input name="email" type="email" id="email" class="form-control" placeholder="Correo / Email" formControlName="email">
+                              </nz-form-control>
+                            </nz-form-item >
+
+                            <ng-template #errorEmail let-control>
+                                <ng-container *ngIf="control.hasError('required')">Campo requerido</ng-container>
+                                <ng-container *ngIf="control.hasError('email')">Campo DNi solo requiere 8 digitos</ng-container>
+                            </ng-template>
+        
+                            <nz-form-item>
+                                <nz-form-control nzErrorTip="Campo requerido">
+                                  <input nz-input name="password" type="password" id="password" class="form-control" placeholder="Contraseña" formControlName="password">
+                                </nz-form-control>
+                            </nz-form-item >
+
+                            <nz-form-item>
+                                <nz-form-control [nzErrorTip]="errorPassword">
+                                  <input nz-input name="confirmpassword" type="password" id="confirmpassword" class="form-control" placeholder="Confirmar Contraseña" formControlName="confirmpassword">
+                                </nz-form-control>
+                            </nz-form-item >
+
+                            <ng-template #errorPassword let-control>
+                                <ng-container *ngIf="control.hasError('required')">Campo requerido</ng-container>
+                                <ng-container *ngIf="control.hasError('matching')">Las contraseñas no coinciden</ng-container>
+                            </ng-template>
+
+                            <nz-form-item class="mb-5">
+                                <nz-form-control [nzErrorTip]="errorDNI">
+                                  <input nz-input name="dni" type="text" id="dni" class="form-control" placeholder="DNI" formControlName="dni">
+                                </nz-form-control>
+                            </nz-form-item >
+
+                            <ng-template #errorDNI let-control>
+                                <ng-container *ngIf="control.hasError('required')">Campo requerido</ng-container>
+                                <ng-container *ngIf="control.hasError('maxLength')">Campo DNi solo requiere 8 digitos</ng-container>
+                                <ng-container *ngIf="control.hasError('pattern')">Campo DNi solo requiere números</ng-container>
+                            </ng-template>
+                            
+                            <button nz-button class="btn w-100 py-3 mb-4" [nzType]="'primary'" [disabled]="loading"> <i nz-icon nzType="loading" *ngIf="loading"></i> CREAR</button>
+                            
+                        </form>
+                    </div>
+                </div> 
+                
+            </div> 
+        </div>
+    </div>
+</div>
+

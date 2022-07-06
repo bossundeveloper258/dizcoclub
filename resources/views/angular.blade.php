@@ -10,6 +10,6 @@
     <app-root></app-root>
   </div>   
   
-<script src="/assets/angular/runtime.1ee7305f0161dbe426a8.js" defer></script><script src="/assets/angular/polyfills.ea0edbe5e804056881e7.js" defer></script><script src="/assets/angular/main.a0bd9564f718d05e2e4c.js" defer></script>
+<script src="/assets/angular/runtime.9a0791766f0f4a0a8b3b.js" defer></script><script src="/assets/angular/polyfills.ea0edbe5e804056881e7.js" defer></script><script src="/assets/angular/main.3127802142dc947116f5.js" defer></script>
 
 </body></html>
