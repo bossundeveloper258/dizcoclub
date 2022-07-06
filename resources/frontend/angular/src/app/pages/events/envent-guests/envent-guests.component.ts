@@ -57,7 +57,7 @@ export class EnventGuestsComponent implements OnInit {
       guestList: this.fb.array([
         this.fb.group({
           name: [{value: this.user?.name ?? "" , disabled: this.user? true: false} , [Validators.required]],
-          lastname: [{value: "" , disabled: this.user? true: false} , [Validators.required]],
+          lastname: [{value: "" , disabled: this.user? true: false} ],
           email: [{value: this.user?.email ?? "" , disabled: this.user? true: false} , [Validators.required]],
           dni: [{value: this.user?.dni ?? "" , disabled: this.user? true: false} , [Validators.required, Validators.maxLength(8), Validators.pattern("^[0-9]*$")]]
         })
@@ -72,7 +72,7 @@ export class EnventGuestsComponent implements OnInit {
     if(this.quantity > 1){
       const formGroup:FormGroup = this.fb.group({
         name: ["" , [Validators.required]],
-        lastname: ["" , [Validators.required]],
+        lastname: ["" ],
         dni: ["" , [Validators.required, Validators.maxLength(8), Validators.pattern("^[0-9]*$")]]
       });
       for (let i = 1; i <= this.quantity - 1; i++) {
