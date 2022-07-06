@@ -17,6 +17,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Support\Facades\Mail;
 
 class OrderController extends BaseController
 {
@@ -94,24 +95,20 @@ class OrderController extends BaseController
 
             foreach ($request->clients as $key => $g) {
                     
-                $_token = Str::random(25)."-".$this->base64url_encode($g['dni']);
-                
                 $order_g = OrderGuests::create([
                     'order_id'  => $order_new->id,
                     'name'      => $g['name'], 
                     'lastname'  => isset($g['lastname']) ? $g['lastname'] : "",
                     'email'     => isset($g['email']) ? $g['email'] : "",
                     'dni'       => $g['dni'], 
-                    'hash'      => $_token,
-                    'qr_path'   => 'qrcodes/' .$_token
+                    'hash'      => "",
+                    'qr_path'   => ""
                 ]);
 
                 $ticket = str_pad( 1000 > $order_g->id ? (1000 + $order_g->id) : $order_g->id, 8, "0", STR_PAD_LEFT);
 
                 OrderGuests::where("id" , "=" , $order_g->id )
                     ->update(['ticket' =>  $ticket]);
-                
-                $html = QrCode::size(300)->generate(env('APP_URL').'/validate-token'.'/'.$_token.'', public_path('/qrcodes/') .$_token.'.svg');
                 
             }
 
@@ -209,18 +206,40 @@ class OrderController extends BaseController
                 "order_id"          => $order->id
             ]);
 
-            $clients = OrderGuests::where("order_id" , "=" , $order->id)->get();
+            $_clients = OrderGuests::where("order_id" , "=" , $order->id)->get();
 
-            $data = array(
-                'email'     => $request->customerEmail,
-                "title"     => $order->event->title,
-                "date"      => $order->event->date,
-                "hour"      => $order->event->time,
-                "image"     => env('APP_URL') .'/public/'. $order->event->avatar_path,
-                'clients'   => $clients
-            );
+            $clients = array();
 
-            // \Mail::to($to_email)->send(new \App\Mail\OrderMail( $event->title, $event->date, $event->time, env('APP_URL') .'/public/'. $event->avatar_path, $clients));
+            $to_email = "";
+
+            foreach ($_clients as $key => $client) {
+                # code...
+                if($key == 0) $to_email = $client->email;
+                $_token = Str::random(25)."-".$this->base64url_encode($client->dni);
+                $clients[] = (object) array( 
+                    "qr"  => env('APP_URL') .'/'.$client->qr_path,
+                    "ticket"  => $client->ticket,
+                    "name"  => $client->name,
+                    "dni"  => $client->dni
+                );
+
+                OrderGuests::where("id" , "=" , $client->id )
+                    ->update(['qr_path' => 'qrcodes/' .$_token.'.svg' , 'hash' => $_token]);
+
+                $html = QrCode::size(300)->generate(env('APP_URL').'/validate-token'.'/'.$_token.'', public_path('/qrcodes/') .$_token.'.svg');
+            }
+
+            
+
+            Mail::to($to_email)->send(
+                new \App\Mail\OrderMail( 
+                    $order->event->title, 
+                    Carbon::parse($order->event->date)->format('d F Y'), 
+                    Carbon::parse($order->event->time)->format('H:i'), 
+                    env('APP_URL') .'/public/'. $order->event->avatar_path, 
+                    $clients)
+                );
+
             // http://localhost:4200/
             // env('APP_URL')
             return Redirect::to(env('APP_URL').'/payment-success/'.$order->token);
@@ -251,6 +270,43 @@ class OrderController extends BaseController
     public function tickets()
     {
 
+    }
+
+    public function sendemailqr(Request $request)
+    {
+        $orderId  = $request->query('order');
+        $order = Order::with('event')->find($orderId);
+        $_clients = OrderGuests::where("order_id" , "=" , $orderId)->get();
+        $clients = array();
+        $to_email = "";
+        foreach ($_clients as $key => $client) {
+            # code...
+            $clients[] = (object) array( 
+                "qr"  => env('APP_URL') .'/'.$client->qr_path,
+                "ticket"  => $client->ticket,
+                "name"  => $client->name,
+                "dni"  => $client->dni
+            );
+        }
+        
+        $data = array(
+            'email'     => $request->customerEmail,
+            "title"     => $order->event->title,
+            "date"      => Carbon::parse($order->event->date)->format('d F Y'),
+            "hour"      => Carbon::parse($order->event->time)->format('H:i'),
+            "image"     => env('APP_URL') .'/public/'. $order->event->avatar_path,
+            'clients'   => $clients
+        );
+        
+        Mail::to("bossun258@gmail.com")->send(
+            new \App\Mail\OrderMail( 
+                $order->event->title, 
+                Carbon::parse($order->event->date)->format('d F Y'), 
+                Carbon::parse($order->event->time)->format('H:i'), 
+                env('APP_URL') .'/public/'. $order->event->avatar_path, 
+                $clients)
+            );
+        return $this->sendResponse([] , '');
     }
 
     /*=======================================================================================*/

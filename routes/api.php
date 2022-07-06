@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\OrderController;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Mail;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -52,6 +55,8 @@ Route::group([
     
 });
 
+Route::get('orders/send-mail', [OrderController::class, 'sendemailqr']);
+
 Route::get('send-mail', function () {
 
     $details = [
@@ -59,7 +64,13 @@ Route::get('send-mail', function () {
         'body' => 'This is for testing email using smtp'
     ];
    
-    $mail = \Mail::to('bossun258@gmail.com')->send(new \App\Mail\MyTestMail($details));
-    var_dump(\Mail::failures());
-    dd("Email is Sent.");
+    $mail = Mail::to('bossundeveloper258@gmail.com')->send(new \App\Mail\MyTestMail($details));
+    var_dump($mail);
+    return new JsonResponse(
+        [
+            'success' => true, 
+            'message' => "Thank you for subscribing to our email, please check your inbox"
+        ], 
+        200
+    );
 });
