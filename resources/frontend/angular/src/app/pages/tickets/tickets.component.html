@@ -1,0 +1,28 @@
+<div nz-row class="pt-4" *ngIf="!loading">
+    <div nz-col nzSpan="24" class="px-3 text-center mb-5 mt-2">
+        <h1>Mis tickets</h1>
+    </div>
+    <div nz-col nzSpan="24" class="px-3">
+        <section class="bg-white mb-3" *ngFor="let ticket of tickets ">
+            <a [routerLink]="['/validate-token', ticket.id]" class="lh-1 d-block">
+                <div nz-row class="align-items-center">
+                    <div nz-col nzSpan="8" class="h-100">
+                        <img [src]="routeStorage+'/'+ticket.event_path" alt="" class="img-fluid">
+                    </div>
+                    <div nz-col nzSpan="16" class="py-3 px-3">
+                        <div class="d-flex flex-column">
+                            <p>N° {{ticket.ticket}}</p>   
+                            <h5 class="mb-2 lh-1">{{ticket.event_title}}</h5>
+                            <p class="text-uppercase text-dark">{{ticket.name}} {{ticket.lastname}}</p>
+                        </div>
+                        
+                    </div>
+                </div>
+            </a>
+        </section>
+        <section *ngIf="tickets.length == 0" class="text-center">
+            <h2>No tiene Tickets</h2>
+        </section>
+    </div>
+</div>
+<app-loading [loading]="loading"></app-loading>

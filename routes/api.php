@@ -55,6 +55,15 @@ Route::group([
     
 });
 
+Route::group([
+    'prefix' => 'orders',
+    'middleware' => 'auth:api'
+  ], function() {
+    
+    Route::get('tickets', [OrderController::class, 'tickets']);
+    Route::get('tickets/{token}', [OrderController::class, 'ticketByToken']);
+});
+
 Route::get('orders/send-mail', [OrderController::class, 'sendemailqr']);
 
 Route::get('send-mail', function () {

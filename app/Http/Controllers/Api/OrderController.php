@@ -269,7 +269,60 @@ class OrderController extends BaseController
 
     public function tickets()
     {
+        $userId = Auth::id();
 
+        $orders = OrderGuests::with(['order', 'order.event'])->select('order_guests.*') 
+                ->join('orders', 'order_guests.order_id', '=', 'orders.id') 
+                ->join('order_payments', 'order_payments.order_id', '=', 'orders.id')    
+                ->where('orders.user_id', '=' , $userId)->get();
+
+        $_tickets = array();        
+        foreach ($orders as $key => $order) {
+            $_tickets[] = array(
+                "name" => $order->name,
+                "lastname" => $order->lastname,
+                "email" => $order->email,
+                "dni" => $order->dni,
+                "qr_path" => $order->qr_path,
+                "ticket" => $order->ticket,
+                "event_path" => $order->order->event->avatar_path,
+                "event_title" => $order->order->event->title,
+                "id" => $order->hash
+            );
+        }
+        return $this->sendResponse($_tickets, '');
+    }
+
+    public function ticketByToken($token)
+    {
+
+        $userId = Auth::id();
+        $admin = Auth::user()->isadmin;
+        $orders = OrderGuests::with(['order', 'order.event'])->select('order_guests.*') 
+                ->join('orders', 'order_guests.order_id', '=', 'orders.id') 
+                ->join('order_payments', 'order_payments.order_id', '=', 'orders.id');
+        if($admin == 1) $orders = $orders->where('orders.user_id', '=' , $userId);
+        
+        $orders = $orders->where('order_guests.hash', '=' , $token)
+                ->get();
+
+        $_tickets = array();        
+        foreach ($orders as $key => $order) {
+            $_tickets[] = array(
+                "name" => $order->name,
+                "lastname" => $order->lastname,
+                "email" => $order->email,
+                "dni" => $order->dni,
+                "qr_path" => $order->qr_path,
+                "ticket" => $order->ticket,
+                "event_path" => $order->order->event->avatar_path,
+                "event_title" => $order->order->event->title,
+                "event_date" => $order->order->event->date,
+                "event_time" => $order->order->event->time,
+                "id" => $order->hash
+            );
+        }
+        return $this->sendResponse($_tickets, '');
     }
 
     public function sendemailqr(Request $request)
@@ -280,7 +333,8 @@ class OrderController extends BaseController
         $clients = array();
         $to_email = "";
         foreach ($_clients as $key => $client) {
-            # code...
+
+            if($key == 0) $to_email = $client->email;
             $clients[] = (object) array( 
                 "qr"  => env('APP_URL') .'/'.$client->qr_path,
                 "ticket"  => $client->ticket,

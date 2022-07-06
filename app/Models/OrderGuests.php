@@ -24,4 +24,9 @@ class OrderGuests extends Model
     protected $hidden = [
         'created_at', 'updated_at', 'id'
     ];
+
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
+    }
 }

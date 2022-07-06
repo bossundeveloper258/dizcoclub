@@ -32,4 +32,21 @@ export class OrderService {
       catchError(errorHandler)
     );
   }
+
+  public getTickets(): Observable<any>{
+    return this.httpClient.get<ResponseModal>(this.apiURL+"/tickets")
+    .pipe(
+      map( (res: ResponseModal ) => res.data ),
+      catchError(errorHandler)
+    );
+  }
+
+  public getTicketByToken(token: string): Observable<any>{
+    return this.httpClient.get<ResponseModal>(this.apiURL+"/tickets/"+token)
+    .pipe(
+      map( (res: ResponseModal ) => res.data ),
+      catchError(errorHandler)
+    );
+  }
+
 }

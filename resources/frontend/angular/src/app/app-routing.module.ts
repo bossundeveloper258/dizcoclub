@@ -13,6 +13,10 @@ const routes: Routes = [
         {
             path: '',
             loadChildren: () => import('./pages/home/home.module').then(m => m.HomeModule)
+        },
+        {
+          path: 'validate-token',
+          loadChildren: () => import('./pages/validate-token/validate-token.module').then(m => m.ValidateTokenModule)
         }
     ]
   },
@@ -27,7 +31,12 @@ const routes: Routes = [
         {
           path: 'profile',
           loadChildren: () => import('./pages/profile/profile.module').then(m => m.ProfileModule)
-        }
+        },
+        {
+          path: 'tickets',
+          loadChildren: () => import('./pages/tickets/tickets.module').then(m => m.TicketsModule)
+        },
+        
     ]
   },
   {
