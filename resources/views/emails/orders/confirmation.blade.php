@@ -43,7 +43,7 @@
                 @foreach ($clients as $client)
                 <div style="width: 100%; text-align:center;">
 
-                    <p style="font-size:18px;color:#ffffff;font-family:'Raleway', Verdana, Arial, Helvetica, sans-serif;margin-bottom: 35px;margin-top:8px; line-height: 1.5; font-weight:600;text-align: center;">TICKET {{ $client->ticket }}</p>
+                    <p style="font-size:18px;color:#ffffff;font-family:'Raleway', Verdana, Arial, Helvetica, sans-serif;margin-bottom: 35px;margin-top:35px; line-height: 1.5; font-weight:600;text-align: center;">TICKET {{ $client->ticket }}</p>
                     <img src="{{ $client->qr }}" alt="" style="margin-bottom: 15px;" width="250px">
                     <p style="font-size:14px;color:#ffffff;font-family:'Raleway', Verdana, Arial, Helvetica, sans-serif;margin-top:8px; margin-bottom: 4px; line-height: 1.5; font-weight:600;text-align: center;">NOMBRES</p>
                     <p style="font-size:14px;color:#ffffff;font-family:'Raleway', Verdana, Arial, Helvetica, sans-serif;margin-top:8px; line-height: 1.5; font-weight:300;text-align: center;margin-bottom: 20px;">{{$client->name}}</p>
