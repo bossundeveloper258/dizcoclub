@@ -206,7 +206,7 @@ class OrderController extends BaseController
                 "order_id"          => $order->id
             ]);
 
-            $_clients = OrderGuests::where("order_id" , "=" , $order->id)->get();
+            $_clients = OrderGuests::where("order_id" , "=" , $order->id)->orderBy('id', 'asc')->get();
 
             $clients = array();
 
@@ -216,7 +216,7 @@ class OrderController extends BaseController
 
             foreach ($_clients as $key => $client) {
                 # code...
-                if($key == 0) $to_email = $client->email;
+                if($to_email == "") $to_email = $client->email;
                 $_token = Str::random(25)."-".$this->base64url_encode($client->dni);
                 $clients[] = (object) array( 
                     "qr"  => env('APP_URL') .'/'.'qrcodes/' .$_token.'.'.$extension_qr,
@@ -331,12 +331,12 @@ class OrderController extends BaseController
     {
         $orderId  = $request->query('order');
         $order = Order::with('event')->find($orderId);
-        $_clients = OrderGuests::where("order_id" , "=" , $orderId)->get();
+        $_clients = OrderGuests::where("order_id" , "=" , $orderId)->orderBy('id', 'asc')->get();
         $clients = array();
         $to_email = "";
         foreach ($_clients as $key => $client) {
 
-            if($key == 0) $to_email = $client->email;
+            if($to_email == "") $to_email = $client->email;
             $clients[] = (object) array( 
                 "qr"  => env('APP_URL') .'/'.$client->qr_path,
                 "ticket"  => $client->ticket,
