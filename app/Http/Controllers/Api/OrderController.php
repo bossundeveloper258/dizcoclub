@@ -219,7 +219,7 @@ class OrderController extends BaseController
                 if($key == 0) $to_email = $client->email;
                 $_token = Str::random(25)."-".$this->base64url_encode($client->dni);
                 $clients[] = (object) array( 
-                    "qr"  => env('APP_URL') .'/'.$client->qr_path,
+                    "qr"  => env('APP_URL') .'/'.'qrcodes/' .$_token.'.'.$extension_qr,
                     "ticket"  => $client->ticket,
                     "name"  => $client->name,
                     "dni"  => $client->dni
