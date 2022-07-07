@@ -212,6 +212,8 @@ class OrderController extends BaseController
 
             $to_email = "";
 
+            $extension_qr = "png";
+
             foreach ($_clients as $key => $client) {
                 # code...
                 if($key == 0) $to_email = $client->email;
@@ -224,9 +226,9 @@ class OrderController extends BaseController
                 );
 
                 OrderGuests::where("id" , "=" , $client->id )
-                    ->update(['qr_path' => 'qrcodes/' .$_token.'.svg' , 'hash' => $_token]);
+                    ->update(['qr_path' => 'qrcodes/' .$_token.'.'.$extension_qr , 'hash' => $_token]);
 
-                $html = QrCode::size(300)->generate(env('APP_URL').'/validate-token'.'/'.$_token.'', public_path('/qrcodes/') .$_token.'.svg');
+                $html = QrCode::format($extension_qr)->size(300)->generate(env('APP_URL').'/validate-token'.'/'.$_token.'', public_path('/qrcodes/') .$_token.'.'.$extension_qr);
             }
 
             
@@ -343,16 +345,7 @@ class OrderController extends BaseController
             );
         }
         
-        $data = array(
-            'email'     => $request->customerEmail,
-            "title"     => $order->event->title,
-            "date"      => Carbon::parse($order->event->date)->format('d F Y'),
-            "hour"      => Carbon::parse($order->event->time)->format('H:i'),
-            "image"     => env('APP_URL') .'/public/'. $order->event->avatar_path,
-            'clients'   => $clients
-        );
-        
-        Mail::to("bossun258@gmail.com")->send(
+        Mail::to($to_email)->send(
             new \App\Mail\OrderMail( 
                 $order->event->title, 
                 Carbon::parse($order->event->date)->format('d F Y'), 
