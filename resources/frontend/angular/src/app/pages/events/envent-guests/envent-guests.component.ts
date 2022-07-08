@@ -106,7 +106,7 @@ export class EnventGuestsComponent implements OnInit {
       }).subscribe(
         (res) => {
 
-          const scriptElement = this.scriptService.loadJsScript(this.renderer, "https://static-content-qas.vnforapps.com/v2/js/checkout.js");
+          const scriptElement = this.scriptService.loadJsScript(this.renderer, environment.visaJS);
           scriptElement.onload = () => {
         
             VisanetCheckout.configure({

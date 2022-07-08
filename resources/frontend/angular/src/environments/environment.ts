@@ -7,7 +7,8 @@ export const environment = {
   api: "http://127.0.0.1:8000/api",
   assetsUrl : "http://localhost:4200",
   storageUrl : "http://127.0.0.1:8000/storage",
-  urlHost: "http://127.0.0.1:8000"
+  urlHost: "http://127.0.0.1:8000",
+  visaJS: "https://static-content-qas.vnforapps.com/v2/js/checkout.js?qa=true"
 };
 
 /*
