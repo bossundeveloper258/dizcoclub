@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use App\Models\Event;
 use App\Models\Order;
+use App\Models\User;
 use App\Models\OrderGuests;
 use App\Models\OrderErrors;
 use App\Models\OrderPayments;
@@ -29,6 +30,66 @@ class OrderController extends BaseController
 
     public function index(){
         return view('order');
+    }
+
+    public function paymentOptions(Request $request){
+        $validator = Validator::make($request->all(),[
+            'total' => 'required',
+            'event_id' => 'required',
+        ]);
+
+        if($validator->fails()) {          
+            return $this->sendError('Error Validacion', ['error'=> $validator->errors() ]);
+        }
+
+        $calculate = $this->calculateAmount($request->event_id, $request->total);
+
+        if( $calculate["calculate"] ){
+            $response = array(
+                "session"           => "",
+                "purchaseNumber"    => config('visa.VISA_PUCHARSERNUMBER'),
+                "merchantid"        => config('visa.VISA_MERCHANT_ID'),
+                "totalAmount"       => $calculate["total"]
+            );
+            return $this->sendResponse($response, 'Session Nuibiz');
+        }else{
+            return $this->sendError( $calculate["message"], ['error'=> []] , 400);
+        }
+
+       
+    }
+
+    private function calculateAmount($event_id ,  $total){
+        $event = Event::find($event_id);
+        if(!$event) return $this->sendError('Evento no existe', ['error'=> []] , 400);
+        
+        $now = strtotime(Carbon::now());
+        $event_date = strtotime($event->date .' '. $event->time);
+
+        if($now >= $event_date) return  array("calculate"=> false , "total"=> 0 ,"message" => 'El Evento ya inicio, no se puedo realizar compra');
+        
+        $totalAmount = $event->price * $total;
+
+        if($event->isdiscount){
+            $orders = Order::select('orders.*')
+                ->join('order_payments', 'order_payments.order_id', '=', 'orders.id')    
+                ->where('event_id', '=' , $event->id)->get();
+            $q = 0;
+            foreach ($orders as $key => $order) 
+            {
+                $q += $order->quantity;
+            }
+
+            $q_total_disponible = $event->stock - $q;
+
+            if( $q_total_disponible <= $total){
+                return array("calculate"=> false , "total"=> 0 ,"message" => 'Supera la cantidad permitira de promocion');
+            }else{
+                $totalAmount = ($event->price * $total) * ( 1 -($event->discount / 100)) ;
+            }
+        }
+
+        return  array("calculate"=> true , "total"=> number_format((float)$totalAmount, 2, '.', '') ,"message" => '');
     }
 
     public function store(Request $request)
@@ -88,13 +149,18 @@ class OrderController extends BaseController
                 'user_id'       => $userId ? $userId : null,
                 'quantity'      => $request->quantity,
                 'total'         => $request->quantity * $event->price,
-                'token'         => $cryp_event
+                'token'         => $cryp_event,
             ]);
 
             $clients = array();
 
+            $currentEmail = "";
+            $currentDNI = "";
+
             foreach ($request->clients as $key => $g) {
-                    
+                if( $currentEmail  == "" )  $currentEmail = $g['email'];
+                if( $currentDNI  == "" )  $currentDNI = $g['dni'];
+
                 $order_g = OrderGuests::create([
                     'order_id'  => $order_new->id,
                     'name'      => $g['name'], 
@@ -112,65 +178,47 @@ class OrderController extends BaseController
                 
             }
 
-            return $this->sendResponse(array( "order" => $order_new->id), 'Orden creado correctamente');
+            $codCli = "D".str_pad( "-".$currentDNI, 10, "0", STR_PAD_LEFT);
+            $isAuth = $userId ? true : false;
+            $diffdate = 0;
+            if($userId)
+            {
+                $user = User::find($userId);
+                $date = Carbon::parse($user->created_at);
+                $now = Carbon::now();
+
+                $diffdate = $date->diffInDays($now);
+            }
+
+            $token = $this->generateToken();
+
+            $calculate = $this->calculateAmount($request->event_id, $request->quantity);
+
+            $totalAmount = 0;
+
+            if( $calculate["calculate"] ){
+
+                $totalAmount = $calculate["total"];
+
+            }else{
+                return $this->sendError( $calculate["message"], ['error'=> []] , 400);
+            }
+
+            $session = $this->generateSesion($totalAmount , $token, $currentEmail, $codCli, $isAuth, $diffdate, $currentDNI);
+            return $this->sendResponse(
+                array( 
+                    "session" => $session,
+                    "order" => $order_new->id,
+                    "merchantid"        => config('visa.VISA_MERCHANT_ID')
+            ), 
+                'Orden creado correctamente');
 
         } catch (\Throwable $th) {
             return $this->sendError('Error del servidor', ['error'=> $th] , 404);
         }
     }
 
-    public function paymentOptions(Request $request){
-        $validator = Validator::make($request->all(),[
-            'total' => 'required',
-            'event_id' => 'required',
-        ]);
-
-        $event = Event::find($request->event_id);
-        if(!$event) return $this->sendError('Evento no existe', ['error'=> []] , 400);
-        
-        $now = strtotime(Carbon::now());
-        $event_date = strtotime($event->date .' '. $event->time);
-
-        if($now >= $event_date) return $this->sendError('El Evento ya inicio, no se puedo realizar compra', ['error'=> []] , 400);
-        
-        if($validator->fails()) {          
-            return $this->sendError('Error Validacion', ['error'=> $validator->errors() ]);
-        }
-
-        $token = $this->generateToken();
-
-        $totalAmount = $event->price * $request->total;
-
-        if($event->isdiscount){
-            $orders = Order::select('orders.*')
-                ->join('order_payments', 'order_payments.order_id', '=', 'orders.id')    
-                ->where('event_id', '=' , $event->id)->get();
-            $q = 0;
-            foreach ($orders as $key => $order) 
-            {
-                $q += $order->quantity;
-            }
-
-            $q_total_disponible = $event->stock - $q;
-
-            if( $q_total_disponible <= $request->total){
-                return $this->sendError('Supera la cantidad permitira de promocion', ['error'=> []] , 400);
-            }else{
-                $totalAmount = ($event->price * $request->total) * ( 1 -($event->discount / 100)) ;
-            }
-        }
-
-        $totalAmount = number_format((float)$totalAmount, 2, '.', '');
-
-        $response = array(
-            "session"           => $this->generateSesion($totalAmount , $token),
-            "purchaseNumber"    => config('visa.VISA_PUCHARSERNUMBER'),
-            "merchantid"        => config('visa.VISA_MERCHANT_ID'),
-            "totalAmount"       => $totalAmount
-        );
-
-        return $this->sendResponse($response, 'Session Nuibiz');
-    }
+    
 
     public function payment(Request $request){
 
@@ -400,8 +448,6 @@ class OrderController extends BaseController
             CURLOPT_ENCODING => "",
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 0,
-            CURLOPT_SSL_VERIFYHOST => 0,
-            CURLOPT_SSL_VERIFYPEER => 0,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => "POST",
             CURLOPT_HTTPHEADER => array(
@@ -414,15 +460,19 @@ class OrderController extends BaseController
         return $response;
     }
 
-    private function generateSesion($amount, $token) {
+    private function generateSesion($amount, $token, $email, $codCli, $isAuth, $diffdate, $numberDoc) {
         $session = array(
             'amount' => $amount,
             'antifraud' => array(
                 'clientIp' => $_SERVER['REMOTE_ADDR'],
                 'merchantDefineData' => array(
-                    'MDD4' => "bossun258@gmail.com",
+                    'MDD4' => $email,
+                    'MDD21' => "0",
+                    'MDD32' => $codCli,
+                    'MDD75' => $isAuth ? "Registrado": "Invitado",
+                    'MDD77' => $diffdate,
                     'MDD33' => "DNI",
-                    'MDD34' => '47152795'
+                    'MDD34' => $numberDoc
                 ),
             ),
             'channel' => 'web',
@@ -460,8 +510,6 @@ class OrderController extends BaseController
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
             CURLOPT_TIMEOUT => 0,
-            CURLOPT_SSL_VERIFYHOST => 0,
-            CURLOPT_SSL_VERIFYPEER => 0,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => "POST",
             CURLOPT_HTTPHEADER => array(

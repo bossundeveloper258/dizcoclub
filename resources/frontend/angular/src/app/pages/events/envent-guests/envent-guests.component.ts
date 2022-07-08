@@ -110,10 +110,10 @@ export class EnventGuestsComponent implements OnInit {
           scriptElement.onload = () => {
         
             VisanetCheckout.configure({
-              sessiontoken:this.session,
+              sessiontoken: res.session,
               channel:'web',
-              merchantid:this.merchantid,
-              purchasenumber:this.purchaseNumber,
+              merchantid: res.merchantid,
+              purchasenumber: res.order,
               amount:this.total,
               expirationminutes:'20',
               timeouturl:'about:blank',
