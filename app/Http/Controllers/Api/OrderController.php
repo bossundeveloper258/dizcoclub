@@ -218,8 +218,6 @@ class OrderController extends BaseController
         }
     }
 
-    
-
     public function payment(Request $request){
 
         // 
@@ -327,12 +325,13 @@ class OrderController extends BaseController
     public function tickets()
     {
         $userId = Auth::id();
-
+        $admin = Auth::user()->isadmin;
         $orders = OrderGuests::with(['order', 'order.event'])->select('order_guests.*') 
                 ->join('orders', 'order_guests.order_id', '=', 'orders.id') 
-                ->join('order_payments', 'order_payments.order_id', '=', 'orders.id')    
-                ->where('orders.user_id', '=' , $userId)->get();
+                ->join('order_payments', 'order_payments.order_id', '=', 'orders.id');
+        if($admin == 0) $orders = $orders->where('orders.user_id', '=' , $userId);
 
+        $orders = $orders->get();
         $_tickets = array();        
         foreach ($orders as $key => $order) {
             $_tickets[] = array(
@@ -344,7 +343,8 @@ class OrderController extends BaseController
                 "ticket" => $order->ticket,
                 "event_path" => $order->order->event->avatar_path,
                 "event_title" => $order->order->event->title,
-                "id" => $order->hash
+                "id" => $order->hash,
+                "price" => $order->order->event->price
             );
         }
         return $this->sendResponse($_tickets, '');

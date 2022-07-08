@@ -34,7 +34,7 @@
                                     </li>
                                 </ng-container>
                                 <li nz-menu-item>
-                                    <a [routerLink]="['/tickets']">Mis tickets</a>
+                                    <a [routerLink]="['/tickets']"><span *ngIf="user.isadmin">Tickets comprados</span><span *ngIf="!user.isadmin">Mis Tickets</span></a>
                                 </li>
                                 <li nz-menu-item>
                                     <a href="javascript: void(0);" (click)="logout()">Cerrar Sesión</a>

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { EventService } from 'src/app/core/services/event.service';
 import { OrderService } from 'src/app/core/services/order.service';
+import { StorageService } from 'src/app/core/services/storage.service';
+import { UserModel } from 'src/app/shared/models/auth.model';
 import { EventModel } from 'src/app/shared/models/event.model';
 import { environment } from 'src/environments/environment';
 
@@ -14,9 +16,14 @@ export class TicketsComponent implements OnInit {
   tickets: any[] = [];
   routeStorage = environment.storageUrl;
   loading: boolean = true;
+  user!: UserModel;
+  
   constructor(
-    private orderService: OrderService
-  ) { }
+    private orderService: OrderService,
+    private storageService: StorageService,
+  ) { 
+    this.user = this.storageService.getUser();
+  }
 
   ngOnInit(): void {
     this.loading = true;
