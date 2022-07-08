@@ -45,6 +45,7 @@ export class LoginComponent implements OnInit {
             this.router.navigate(['/events'])
           },
           (error) => {
+            this.loading = false;
             this.modalRef = this.modalService.error({
               nzTitle: "Error",
               nzContent: error.message,

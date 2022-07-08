@@ -49,4 +49,12 @@ export class OrderService {
     );
   }
 
+  public postConfirmAssist(token: any): Observable<any>{
+    return this.httpClient.post<ResponseModal>(this.apiURL+"/tickets/assist", {id: token})
+    .pipe(
+      map( (res: ResponseModal ) => res.data ),
+      catchError(errorHandler)
+    );
+  }
+
 }

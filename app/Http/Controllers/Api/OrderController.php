@@ -303,7 +303,7 @@ class OrderController extends BaseController
         $orders = OrderGuests::with(['order', 'order.event'])->select('order_guests.*') 
                 ->join('orders', 'order_guests.order_id', '=', 'orders.id') 
                 ->join('order_payments', 'order_payments.order_id', '=', 'orders.id');
-        if($admin == 1) $orders = $orders->where('orders.user_id', '=' , $userId);
+        if($admin == 0) $orders = $orders->where('orders.user_id', '=' , $userId);
         
         $orders = $orders->where('order_guests.hash', '=' , $token)
                 ->get();
@@ -321,7 +321,8 @@ class OrderController extends BaseController
                 "event_title" => $order->order->event->title,
                 "event_date" => $order->order->event->date,
                 "event_time" => $order->order->event->time,
-                "id" => $order->hash
+                "id" => $order->hash,
+                "assist" => $order->assist,
             );
         }
         return $this->sendResponse($_tickets, '');
@@ -354,6 +355,31 @@ class OrderController extends BaseController
                 $clients)
             );
         return $this->sendResponse([] , '');
+    }
+
+    public function assist(Request $request)
+    {
+        $userId = Auth::id();
+        $admin = Auth::user()->isadmin;
+        if( $admin == 0){
+            return $this->sendError('No tiene permisos necesarios para hacer una peticion', ['error'=> [] ]);
+        }
+
+        $validator = Validator::make($request->all(),[
+            'id' => 'required',
+        ]);
+        
+        if($validator->fails()) {          
+            return $this->sendError('Es necesario el token del ticket', ['error'=> $validator->errors() ]);
+        }
+
+        $orderGuests = OrderGuests::where('hash', '=' , $request->id)->get();
+        if( count($orderGuests) == 0 )  return $this->sendError('No existe cliente', ['error'=> $validator->errors() ]);
+
+        OrderGuests::where('hash', '=' , $request->id)->update(['assist' => true]);
+
+        return $this->sendResponse([] , 'Se confirmo asistencia del cliente');
+        
     }
 
     /*=======================================================================================*/

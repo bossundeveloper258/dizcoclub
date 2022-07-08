@@ -1,8 +1,8 @@
-<div class="margin-auto" style="background-color: #ff4f89;min-height: 100vh;">
-    <div nz-row class="background-home pt-4" style="max-width: 550px;margin: 0 auto;">
+<div class="margin-auto" style="background-color: #ff4f89;min-height: 100vh;" >
+    <div nz-row class="background-home pt-4" style="max-width: 550px;margin: 0 auto;" *ngIf="!loading">
         <div nz-col nzSpan="24" class="">
             <div nz-row>
-                <div nz-col nzSpan="24" class="text-end mb-3" *ngIf="!user?.isadmin">
+                <div nz-col nzSpan="24" class="text-end mb-3" >
                     <div class="d-flex justify-content-end px-4">
                         <a [routerLink]="['/tickets']" class="circle-close">
                             <img [src]="routeAsset+'/assets/img/close.png'" alt="" width="10px">
@@ -35,8 +35,16 @@
                     <p  class="text-white mb-2 fw-bold">{{ ticket?.event_date | date : "dd 'de' MMMM 'de' YYYY" }}</p>
                     <p  class="text-white mb-1 fw-bold">{{ ticket?.event_time }}</p>
                 </div>
+
+                <div nz-col nzSpan="24" class="text-center mb-3" *ngIf="user?.isadmin && !ticket?.assist" >
+                    <button nz-button class="btn w-100 py-3 mt-5 mb-4" [nzType]="'dashed'" (click)="confirm()" [disabled]="loadingBtn"> 
+                        <i nz-icon nzType="loading" *ngIf="loadingBtn"></i> CONFIRMAR ASISTENCIA
+                    </button>
+                </div>
             </div>
         </div>
     </div>
+    <app-loading [loading]="loading"></app-loading>
 </div>
+
 

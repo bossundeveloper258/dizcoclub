@@ -43,7 +43,7 @@ class AuthController  extends BaseController
         $credentials = request(['email', 'password']);
 
         if (!Auth::attempt($credentials))
-            return $this->sendError('Unauthorised.', ['error'=>'Unauthorised']);
+            return $this->sendError('Usurio o contraseña incorrectas.', ['error'=>'Unauthorised']);
 
         $user = Auth::user();
         $token = $user->createToken('MyApp')->accessToken;

@@ -199,7 +199,7 @@ export class EventAddComponent implements OnInit {
                   })
                 },
                 error => {
-                  console.log(error)
+                  
                   this.modalService.error({
                     nzTitle: "Error",
                     nzContent: error.message
@@ -213,6 +213,10 @@ export class EventAddComponent implements OnInit {
             }
           } catch (error) {
             this.loadingBtn = false;
+            this.modalService.error({
+              nzTitle: "Error",
+              nzContent: "Error en el servidor"
+            });
           }
           
         }

@@ -62,6 +62,7 @@ Route::group([
     
     Route::get('tickets', [OrderController::class, 'tickets']);
     Route::get('tickets/{token}', [OrderController::class, 'ticketByToken']);
+    Route::post('tickets/assist', [OrderController::class, 'assist']);
 });
 
 Route::get('orders/send-mail', [OrderController::class, 'sendemailqr']);

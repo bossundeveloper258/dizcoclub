@@ -18,7 +18,8 @@ class OrderGuests extends Model
         'email',
         'dni', 
         'hash',
-        'qr_path'
+        'qr_path',
+        'assist'
     ];
 
     protected $hidden = [
