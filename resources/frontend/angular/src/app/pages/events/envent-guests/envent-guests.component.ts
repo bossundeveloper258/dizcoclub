@@ -114,12 +114,12 @@ export class EnventGuestsComponent implements OnInit {
               channel:'web',
               merchantid: res.merchantid,
               purchasenumber: res.order,
-              amount:this.total,
+              amount: this.total,
               expirationminutes:'20',
               timeouturl:'about:blank',
               merchantlogo:this.urlHost+'/assets/angular/assets/img/LOGO.png',
               formbuttoncolor:'#000000',
-              action: this.urlHost+'/api/orders/payment?o='+res.order,
+              action: this.urlHost+'/api/orders/payment?o='+res.order+'&a='+this.total,
               complete: function(params: any) {
                 console.log(params)
                 alert(JSON.stringify(params));

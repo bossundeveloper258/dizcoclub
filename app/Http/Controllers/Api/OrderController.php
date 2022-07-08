@@ -233,7 +233,14 @@ class OrderController extends BaseController
             return Redirect::to(env('APP_URL').'/payment-error');
         }
 
+        
+
         $orderId  = $request->query('o');
+        $amount  = $request->query('a');
+
+        $token = $this->generateToken();
+
+        $authorization = $this->generateAuthorization($amount, $orderId, $request->transactionToken, $token);
         
         try {
         
