@@ -33,8 +33,8 @@ export class OrderService {
     );
   }
 
-  public getTickets(): Observable<any>{
-    return this.httpClient.get<ResponseModal>(this.apiURL+"/tickets")
+  public getTickets(filter: number): Observable<any>{
+    return this.httpClient.get<ResponseModal>(this.apiURL+"/tickets?filter="+filter)
     .pipe(
       map( (res: ResponseModal ) => res.data ),
       catchError(errorHandler)

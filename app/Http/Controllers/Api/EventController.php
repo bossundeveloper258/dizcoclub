@@ -27,7 +27,18 @@ class EventController extends BaseController
             ->where("date", ">=" , $date)
             // ->where("time", ">" , $time)
             ->get();
-        return $this->sendResponse($events, 'List');
+        $_events = array();
+        foreach ($events as $key => $event) {
+            $date = Carbon::now();
+            $date_event = Carbon::parse(  $event->date)->subDays(3);
+            if($event->isdiscount){
+                if( strtotime( $date ) > strtotime($date_event) ){
+                    $event["isdiscount"] = false;
+                }
+            }
+            $_events [] = $event;
+        }
+        return $this->sendResponse($_events, 'List');
     }
 
     public function store(Request $request){
@@ -129,6 +140,13 @@ class EventController extends BaseController
                     "q" => $order->quantity,
                     "t" => $order->total,
                 );
+            }
+            $date = Carbon::now();
+            $date_event = Carbon::parse(  $event->date)->subDays(3);
+            if($event->isdiscount){
+                if( strtotime( $date ) > strtotime($date_event) ){
+                    $event["isdiscount"] = false;
+                }
             }
             
             $event['orders'] = $_order;

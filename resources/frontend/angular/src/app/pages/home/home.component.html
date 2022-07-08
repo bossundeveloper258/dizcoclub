@@ -75,9 +75,12 @@
                             <img [src]="routeAsset+'/assets/img/headphones.png'" alt="" width="50px" class="me-3">
                             <span>PLAYLIST DIZCO</span>
                         </a>
+                        <div class="px-3 mb-2" *ngIf="playlist">
+                            <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/4cjC2hJPRAWfABrMIqBZnN?utm_source=generator" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+                        </div>
                     </li>
                     <li>
-                        <a href="#" class="section-link py-3 mb-3">
+                        <a href="https://www.facebook.com/DizcoClub/photos/?ref=page_internal&tab=album" target="_blank" class="section-link py-3 mb-3">
                             <img [src]="routeAsset+'/assets/img/moustache.png'" alt="" width="50px" class="me-3">
                             <span>FOTOS Y VIDEOS</span>
                         </a>
@@ -85,9 +88,7 @@
 
                     
                 </ul>
-                <div class="px-3" *ngIf="playlist">
-                    <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/4cjC2hJPRAWfABrMIqBZnN?utm_source=generator" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
-                </div>
+                
             </div>
         </div>
     </div>

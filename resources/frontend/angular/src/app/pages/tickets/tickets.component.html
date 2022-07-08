@@ -1,29 +1,43 @@
-<div nz-row class="pt-4" *ngIf="!loading">
-    <div nz-col nzSpan="24" class="px-3 text-center mb-5 mt-2">
+<div nz-row class="pt-2" >
+    <div nz-col nzSpan="24" class="px-3 text-center mb-1 mt-2">
         <h1>Mis tickets</h1>
     </div>
-    <div nz-col nzSpan="24" class="px-3">
-        <section class="bg-white mb-3" *ngFor="let ticket of tickets ">
-            <a [routerLink]="['/validate-token', ticket.id]" class="lh-1 d-block">
-                <div nz-row class="align-items-center">
-                    <div nz-col nzSpan="8" class="h-100">
-                        <img [src]="routeStorage+'/'+ticket.event_path" alt="" class="img-fluid">
-                    </div>
-                    <div nz-col nzSpan="16" class="py-3 px-3">
-                        <div class="d-flex flex-column">
-                            <p>N° {{ticket.ticket}}</p>   
-                            <h5 class="mb-2 lh-1">{{ticket.event_title}}</h5>
-                            <p class="text-uppercase text-dark" *ngIf="user.isadmin">{{ticket.name}} {{ticket.lastname}}</p>
-                            <p class="text-uppercase text-dark" *ngIf="!user.isadmin">S/ {{ticket.price}}</p>
+    
+    <div nz-row class="pt-4" >
+        <div nz-col nzSpan="24" class="px-3" *ngIf="!loading">
+
+            <section class="bg-white mb-3" *ngFor="let ticket of tickets ">
+                <a [routerLink]="['/validate-token', ticket.id]" class="lh-1 d-block">
+                    <div nz-row class="align-items-center">
+                        <div nz-col nzSpan="8" class="h-100">
+                            <img [src]="routeStorage+'/'+ticket.event_path" alt="" class="img-fluid">
                         </div>
-                        
+                        <div nz-col nzSpan="16" class="py-3 px-3">
+                            <div class="d-flex flex-column position-relative">
+                                <p>N° {{ticket.ticket}}</p>   
+                                <h5 class="mb-2 lh-1">{{ticket.event_title}}</h5>
+                                <p class="text-uppercase text-dark" *ngIf="user.isadmin">{{ticket.name}} {{ticket.lastname}}</p>
+                                <p class="text-uppercase text-dark" *ngIf="!user.isadmin">S/ {{ticket.price}}</p>
+                                <div class="position-absolute confirm-ticket" *ngIf="ticket.confirm == 1">
+                                    CONFIRMADO
+                                </div>
+                            </div>
+                            
+                        </div>
                     </div>
-                </div>
-            </a>
-        </section>
-        <section *ngIf="tickets.length == 0" class="text-center">
-            <h2>No tiene Tickets</h2>
-        </section>
+                </a>
+            </section>
+            
+            <section class="d-flex  justify-content-center" *ngIf="tickets.length == 0">
+                <h2>No tiene Tickets</h2>
+            </section>
+            
+            
+        </div>
     </div>
+    <div nz-col nzSpan="24" class="px-3 text-center mb-1 mt-2">
+        <app-loading [loading]="loading"></app-loading> 
+    </div>
+       
 </div>
-<app-loading [loading]="loading"></app-loading>
+

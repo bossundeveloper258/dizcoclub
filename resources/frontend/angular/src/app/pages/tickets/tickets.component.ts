@@ -26,8 +26,18 @@ export class TicketsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    
+    this.getAllTickets(0);
+  }
+
+  onChangeTab(tab: any){
+    console.log()
+    this.getAllTickets(tab.index);
+  }
+
+  getAllTickets(filter: number){
     this.loading = true;
-    this.orderService.getTickets().subscribe(
+    this.orderService.getTickets(filter).subscribe(
       res => {
         this.loading = false;
         this.tickets = res;
@@ -37,5 +47,4 @@ export class TicketsComponent implements OnInit {
       }
     )
   }
-
 }

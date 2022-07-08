@@ -66,6 +66,14 @@ class OrderController extends BaseController
         $now = strtotime(Carbon::now());
         $event_date = strtotime($event->date .' '. $event->time);
 
+        $date = Carbon::now();
+        $date_event = Carbon::parse(  $event->date)->subDays(3);
+        if($event->isdiscount){
+            if( strtotime( $date ) > strtotime($date_event) ){
+                $event["isdiscount"] = false;
+            }
+        }
+
         if($now >= $event_date) return  array("calculate"=> false , "total"=> 0 ,"message" => 'El Evento ya inicio, no se puedo realizar compra');
         
         $totalAmount = $event->price * $total;
@@ -344,7 +352,8 @@ class OrderController extends BaseController
                 "event_path" => $order->order->event->avatar_path,
                 "event_title" => $order->order->event->title,
                 "id" => $order->hash,
-                "price" => $order->order->event->price
+                "price" => $order->order->event->price,
+                "confirm" => $order->assist
             );
         }
         return $this->sendResponse($_tickets, '');
