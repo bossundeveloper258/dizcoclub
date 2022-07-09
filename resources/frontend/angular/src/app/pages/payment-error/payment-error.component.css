@@ -1,0 +1,11 @@
+.bg-danger{
+    background-color: #f6252e !important;
+}
+
+.btn-back{
+    color: #FFF;
+    border-radius: 15px;
+    width: 110px;
+    padding: .6rem 0;
+    border: 1px solid #FFF;
+}

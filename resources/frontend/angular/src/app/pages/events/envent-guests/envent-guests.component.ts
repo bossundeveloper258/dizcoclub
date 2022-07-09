@@ -29,6 +29,9 @@ export class EnventGuestsComponent implements OnInit {
   urlHost= environment.urlHost;
   eventId!: number;
 
+  loading: boolean = false;
+  loadingDisabled: boolean = true;
+
   constructor(
     private fb: FormBuilder,
     private storageService: StorageService,
@@ -61,7 +64,8 @@ export class EnventGuestsComponent implements OnInit {
           email: [{value: this.user?.email ?? "" , disabled: this.user? true: false} , [Validators.required]],
           dni: [{value: this.user?.dni ?? "" , disabled: this.user? true: false} , [Validators.required, Validators.maxLength(8), Validators.pattern("^[0-9]*$")]]
         })
-      ])
+      ]),
+      agree: [false, [Validators.required]]
     });
     
     this.guestsArray = this.validateForm.get('guestList') as FormArray;
@@ -98,6 +102,8 @@ export class EnventGuestsComponent implements OnInit {
         body = _body;
       }
 
+      this.loading = true;
+      this.loadingDisabled = true;
       this.orderService.postCreate({
         event_id : this.eventId,
         quantity : this.quantity,
@@ -162,4 +168,11 @@ export class EnventGuestsComponent implements OnInit {
     return this.validateForm.disabled ? true : this.validateForm.valid
   }
 
+  onChangeTerm(term: any){
+    if(term){
+      this.loadingDisabled = false;
+    }else{
+      this.loadingDisabled = true;
+    }
+  }
 }

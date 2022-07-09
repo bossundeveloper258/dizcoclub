@@ -28,11 +28,13 @@ class OrderController extends BaseController
         // $this->middleware('admin');
     }
 
-    public function index(){
+    public function index()
+    {
         return view('order');
     }
 
-    public function paymentOptions(Request $request){
+    public function paymentOptions(Request $request)
+    {
         $validator = Validator::make($request->all(),[
             'total' => 'required',
             'event_id' => 'required',
@@ -59,7 +61,8 @@ class OrderController extends BaseController
        
     }
 
-    private function calculateAmount($event_id ,  $total){
+    private function calculateAmount($event_id ,  $total)
+    {
         $event = Event::find($event_id);
         if(!$event) return $this->sendError('Evento no existe', ['error'=> []] , 400);
         
@@ -178,14 +181,14 @@ class OrderController extends BaseController
                     'hash'      => "",
                     'qr_path'   => ""
                 ]);
-
+                
                 $ticket = str_pad( 1000 > $order_g->id ? (1000 + $order_g->id) : $order_g->id, 8, "0", STR_PAD_LEFT);
 
                 OrderGuests::where("id" , "=" , $order_g->id )
                     ->update(['ticket' =>  $ticket]);
                 
             }
-
+            
             $codCli = "D".str_pad( "-".$currentDNI, 10, "0", STR_PAD_LEFT);
             $isAuth = $userId ? true : false;
             $diffdate = 0;
@@ -197,10 +200,12 @@ class OrderController extends BaseController
 
                 $diffdate = $date->diffInDays($now);
             }
-
+            
             $token = $this->generateToken();
 
             $calculate = $this->calculateAmount($request->event_id, $request->quantity);
+
+            
 
             $totalAmount = 0;
 
@@ -213,6 +218,7 @@ class OrderController extends BaseController
             }
 
             $session = $this->generateSesion($totalAmount , $token, $currentEmail, $codCli, $isAuth, $diffdate, $currentDNI);
+
             return $this->sendResponse(
                 array( 
                     "session" => $session,
@@ -235,30 +241,40 @@ class OrderController extends BaseController
         ]);
 
         if($validator->fails()) {          
-            $this->createOrderError("No se recibio transactionToken y customerEmail de Niubiz" , null , null);
-            return Redirect::to(env('APP_URL').'/payment-error');
+            $this->createOrderError($request->description , null , null);
+            return Redirect::to(env('APP_URL').'/payment-error?d='.$request->description);
         }
-
-        
 
         $orderId  = $request->query('o');
         $amount  = $request->query('a');
 
         $token = $this->generateToken();
 
-        $authorization = $this->generateAuthorization($amount, $orderId, $request->transactionToken, $token);
-        
         try {
         
             if( $orderId == "" ){
                 $this->createOrderError("Orden no creada" , $request->transactionToken , $request->customerEmail);
-                return Redirect::to(env('APP_URL').'/payment-error');
+                return Redirect::to(env('APP_URL').'/payment-error?d=Orden no creada');
             }
 
             $order = Order::with('event')->find($orderId);
             if( $orderId == null){
                 $this->createOrderError("Orden no existe" , $request->transactionToken , $request->customerEmail);
-                return Redirect::to(env('APP_URL').'/payment-error');
+                return Redirect::to(env('APP_URL').'/payment-error?d=Orden no existe');
+            }
+
+            $authorization = $this->generateAuthorization($amount, $orderId, $request->transactionToken, $token);
+
+            if( !isset( $authorization->dataMap ) ){
+                $message = isset($authorization->data->ACTION_DESCRIPTION) ?  $authorization->data->ACTION_DESCRIPTION : "Operacion no permitida";
+                $this->createOrderError($message , $request->transactionToken , $request->customerEmail); 
+                return Redirect::to(env('APP_URL').'/payment-error?d='.$message);  
+            }
+
+            if( $authorization->dataMap->ACTION_CODE != "000" ){
+                $message = $authorization->dataMap->ACTION_DESCRIPTION;
+                $this->createOrderError($message , $request->transactionToken , $request->customerEmail); 
+                return Redirect::to(env('APP_URL').'/payment-error?d='.$message);
             }
 
             OrderPayments::create([
@@ -292,8 +308,6 @@ class OrderController extends BaseController
                 $html = QrCode::format($extension_qr)->size(300)->generate(env('APP_URL').'/validate-token'.'/'.$_token.'', public_path('/qrcodes/') .$_token.'.'.$extension_qr);
             }
 
-            
-
             Mail::to($to_email)->send(
                 new \App\Mail\OrderMail( 
                     $order->event->title, 
@@ -309,7 +323,7 @@ class OrderController extends BaseController
 
         } catch (\Throwable $th) {
             $this->createOrderError("Error codigo" , null , null);
-            return Redirect::to(env('APP_URL').'/payment-error');
+            return Redirect::to(env('APP_URL').'/payment-error?d=Error transacción');
         }
     }
 
@@ -464,6 +478,8 @@ class OrderController extends BaseController
             CURLOPT_ENCODING => "",
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 0,
+            CURLOPT_SSL_VERIFYHOST => FALSE,
+            CURLOPT_SSL_VERIFYPEER => FALSE,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => "POST",
             CURLOPT_HTTPHEADER => array(
@@ -471,6 +487,7 @@ class OrderController extends BaseController
             'Authorization: '.'Basic '.base64_encode(config('visa.VISA_USER').":".config('visa.VISA_PWD'))
             ),
         ));
+
         $response = curl_exec($curl);
 
         return $response;
@@ -526,6 +543,8 @@ class OrderController extends BaseController
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
             CURLOPT_TIMEOUT => 0,
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_SSL_VERIFYPEER => 0,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => "POST",
             CURLOPT_HTTPHEADER => array(

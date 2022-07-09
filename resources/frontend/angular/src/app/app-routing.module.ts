@@ -49,6 +49,16 @@ const routes: Routes = [
         }
     ]
   },
+  {
+    path: 'payment-error',
+    component: MainComponent,
+    children: [
+        {
+            path: '',
+            loadChildren: () => import('./pages/payment-error/payment-error.module').then(m => m.PaymentErrorModule)
+        }
+    ]
+  },
 ];
 
 @NgModule({

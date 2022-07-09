@@ -1,0 +1,21 @@
+
+<div class="bg-danger d-flex align-items-center full-scren-h">
+    <div style="max-width: 550px;margin: 0 auto;">
+        <div nz-row class="bg-danger align-items-center pt-4" >
+            <div nz-col nzSpan="24" class="text-center mb-3">
+                <img [src]="routeAsset+'/assets/img/checked.png'" alt="" width="40px" class="mb-4">
+                <h2 class="mb-0 text-white">PAGO</h2>  
+                <h2 class="text-white">ERROR</h2>
+            </div>
+            <div nz-col nzSpan="24" class="text-center mb-4 lh-1">
+                <h3 class="text-white">{{description}}</h3>
+            </div>
+            <div nz-col nzSpan="24" class="text-center mb-2">
+                <a [routerLink]="['/']" class="d-inline-block btn-back">INICIO</a>
+            </div>
+            <div nz-col nzSpan="24" class="text-center mb-3 px-4">
+                <img [src]="routeAsset+'/assets/img/payment-error.jpeg'" alt="" class="img-fluid">
+            </div>
+        </div>
+    </div>
+</div>

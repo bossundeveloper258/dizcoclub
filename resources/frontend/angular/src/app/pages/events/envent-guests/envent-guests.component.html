@@ -60,7 +60,7 @@
                 <div nz-col nzSpan="24" class="mb-2">
                     <nz-form-item nz-row >
                         <nz-form-control [nzSpan]="24">
-                          <label nz-checkbox formControlName="agree">
+                          <label nz-checkbox formControlName="agree" (ngModelChange)="onChangeTerm($event)">
                             <span>Acepto los Términos y condiciones</span>
                           </label>
                         </nz-form-control>
@@ -72,8 +72,8 @@
 
         <div nz-row class="">
             <div nz-col nzSpan="24" class="mb-2">
-                <button class="btn w-100 fs-5 py-4" nz-button [nzType]="'primary'" (click)="submitForm()">
-                    S/ {{total}} | CONTINUAR COMPRA
+                <button class="btn w-100 fs-5 py-4" nz-button [nzType]="'primary'" (click)="submitForm()" [disabled]="loadingDisabled">
+                    <i nz-icon nzType="loading" *ngIf="loading"></i> S/ {{total}} | CONTINUAR COMPRA
                 </button>
             </div>
         </div>
