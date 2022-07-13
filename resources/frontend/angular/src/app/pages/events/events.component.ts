@@ -43,7 +43,7 @@ export class EventsComponent implements OnInit {
     if( this.user?.isadmin ){
       this.router.navigate(['events/detail', eventId , 'form']);
     }else{
-      this.router.navigate(['events/detail'], eventId);
+      this.router.navigate(['events/detail' , eventId]);
     }
   }
 

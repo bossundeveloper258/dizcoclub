@@ -8,8 +8,8 @@ import { EventsComponent } from './events.component';
 const routes: Routes = [
     { path: '', component: EventsComponent},
     { path: 'add', component: EventAddComponent},
-    { path: 'detail/:idUpdate/form', component: EventAddComponent},
     { path: 'detail/:id', component: EventDetailComponent},
+    { path: 'detail/:idUpdate/form', component: EventAddComponent},
     { path: 'detail/:id/guests', component: EnventGuestsComponent},
     
 ];
