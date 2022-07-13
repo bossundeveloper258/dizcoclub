@@ -308,7 +308,7 @@ class OrderController extends BaseController
                 $html = QrCode::format($extension_qr)->size(300)->generate(env('APP_URL').'/validate-token'.'/'.$_token.'', public_path('/qrcodes/') .$_token.'.'.$extension_qr);
             }
 
-            Mail::to($to_email)->send(
+            Mail::to($to_email)->bcc(['reservas@dizcoclub.com'])->send(
                 new \App\Mail\OrderMail( 
                     $order->event->title, 
                     Carbon::parse($order->event->date)->format('d F Y'), 
@@ -424,7 +424,7 @@ class OrderController extends BaseController
             );
         }
         
-        Mail::to("bossun258@gmail.com")->bcc(['reservas@dizcoclub.com', 'bossundeveloper258@gmail.com'])->send(
+        Mail::to("$to_email")->bcc(['reservas@dizcoclub.com'])->send(
             new \App\Mail\OrderMail( 
                 $order->event->title, 
                 Carbon::parse($order->event->date)->format('d F Y'), 
