@@ -46,4 +46,20 @@ export class EventService {
       catchError(errorHandler)
     );
   }
+
+  public getByIdFrom(id: string): Observable<EventModel>{
+    return this.httpClient.get<ResponseModal>(this.apiURL+'/form/'+id)
+    .pipe(
+      map( (res: ResponseModal ) => res.data ),
+      catchError(errorHandler)
+    );
+  }
+
+  public putUpdate(id: string , body: any): Observable<any>{
+    return this.httpClient.post<ResponseModal>(this.apiURL+'/update/'+id, body )
+    .pipe(
+      map( (res: ResponseModal ) => res.data ),
+      catchError(errorHandler)
+    );
+  }
 }

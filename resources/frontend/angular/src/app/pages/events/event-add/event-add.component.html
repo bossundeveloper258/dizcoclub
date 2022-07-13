@@ -105,7 +105,14 @@
               />
             </div>
 
-            <div class="image-list" *ngFor="let file of fileArr; let i = index">
+            <div class="image-list text-center" *ngFor="let file of fileArrExist; let i = index">
+              <div class="profile">
+                <img [src]="file.url" alt="" />
+              </div>
+              <p>{{ file.name }}</p>
+            </div>
+
+            <div class="image-list text-center" *ngFor="let file of fileArr; let i = index">
               <div class="profile">
                 <img [src]="sanitize(file['url'])" alt="" />
               </div>

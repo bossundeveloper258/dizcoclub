@@ -52,7 +52,8 @@ Route::group([
   ], function() {
     
     Route::post('', [EventController::class, 'store']);
-    
+    Route::get('form/{id}', [EventController::class, 'editForm']);
+    Route::post('update/{id}', [EventController::class, 'update']);
 });
 
 Route::group([

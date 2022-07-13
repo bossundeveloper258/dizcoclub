@@ -9,14 +9,17 @@ import { differenceInCalendarDays, setHours } from 'date-fns';
 import { EventService } from 'src/app/core/services/event.service';
 import * as moment from 'moment'
 import { NzModalService, NzModalRef } from 'ng-zorro-antd/modal';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
+import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-event-add',
   templateUrl: './event-add.component.html',
   styleUrls: ['./event-add.component.css']
 })
 export class EventAddComponent implements OnInit {
+
+  eventId?: string;
 
   date = new Date();
   time = new Date("2021-01-01 00:00");
@@ -32,7 +35,7 @@ export class EventAddComponent implements OnInit {
   modalRef?: NzModalRef;
   // file
   loading = false;
-  avatarUrl?: string;
+  avatarUrl: string = "";
   fileList: NzUploadFile[] = [];
 
   loadingBtn: boolean = false;
@@ -46,6 +49,9 @@ export class EventAddComponent implements OnInit {
   fileArr: any[] = [];
   imgArr: string[] = [];
   fileObj: any[] = [];
+  fileArrExist: any[] = [];
+
+  routeStorage = environment.storageUrl;
 
   constructor(
     private msg: NzMessageService,
@@ -54,7 +60,12 @@ export class EventAddComponent implements OnInit {
     private modalService: NzModalService,
     private router: Router,
     private sanitizer: DomSanitizer,
+    private activatedRoute: ActivatedRoute,
   ) {
+    this.activatedRoute.paramMap.subscribe( paramMap => {
+      this.eventId = paramMap.get('idUpdate')?.toString();
+    });
+
     this.validateForm = this.fb.group({
       title: [null, [ Validators.required]],
       date: [null, [Validators.required]],
@@ -76,6 +87,10 @@ export class EventAddComponent implements OnInit {
   }
  
   upload(e: any) {
+    this.fileObj = [];
+    this.fileArr = [];
+    this.imgArr = [];
+    this.fileArrExist = [];
     const fileListAsArray = Array.from(e);
     fileListAsArray.forEach((item, i) => {
       const file = (e as HTMLInputElement);
@@ -94,7 +109,33 @@ export class EventAddComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
+    if( this.eventId ){
+      this.eventService.getByIdFrom(this.eventId).subscribe(
+        (res) => {
+          console.log("res", res);
+          this.date = new Date( moment(res.date).add({day: 1}).format('YYYY-MM-DD') );
+          this.time = new Date("2021-01-01 "+res.time);
+          this.validateForm.patchValue({
+            title: res.title,
+            //date: res.date,
+            //time: res.time,
+            address: res.address,
+            description: res.description,
+            stock: res.stock,
+            price: res.price,
+            isdiscount: res.isdiscount,
+            discount: res.discount?.toString(),
+            discount_stock: res.discount_stock
+          })
+          this.avatarUrl = this.routeStorage + '/'+res.avatar_path
+          if( res.files != null ){
+            res.files.filter( _f => _f.type == 2 ).forEach(f => {
+              this.fileArrExist.push({url:  this.routeStorage +'/'+f.path, name: ""});
+            });
+          }
+        }
+      )
+    }
     
   }
 
@@ -154,10 +195,11 @@ export class EventAddComponent implements OnInit {
 
   submitForm(){
     if (this.validateForm.valid) {
-      
+      let title  = this.eventId ? "Actualizar Evento" : "Crear Evento";
+      let question = this.eventId ? "¿Desea actualizar el Evento " : "¿Desea crear el Evento ";
       this.modalRef = this.modalService.confirm({
-        nzTitle: "Crear Evento",
-        nzContent: "¿Desea crear el Evento "+ this.validateForm.get('title')?.value+"?",
+        nzTitle: title,
+        nzContent: question+ this.validateForm.get('title')?.value+"?",
         nzClosable: true,
         nzOkText: "Aceptar",
         nzOnOk: () => {
@@ -178,13 +220,42 @@ export class EventAddComponent implements OnInit {
               formData.append("discount_stock", this.validateForm.get('discount_stock')?.value);
             }
 
-            if(this.avatarFile){
-              formData.append("file", this.avatarFile);
+            if( this.avatarUrl != ""){
+              if(this.avatarFile){
+                formData.append("file", this.avatarFile);
+              }
+            }else{
+              this.msg.error("Subir una imagen como avatar")
+              return;
+            }
 
-              this.fileObj.forEach((file: any) => {
-                formData.append('files[]', file);
-              });
-        
+            this.fileObj.forEach((file: any) => {
+              formData.append('files[]', file);
+            });
+            if( this.eventId ){
+              this.eventService.putUpdate(this.eventId , formData).subscribe(
+                res => {
+                  this.loadingBtn = false;
+                  this.modalService.success({
+                    nzTitle: "Actualizado",
+                    nzContent: "Actualizado correctamente",
+                    nzClosable: false,
+                    nzOkText: "Aceptar",
+                    nzOnOk: () => {
+                      this.router.navigate(['/events']);
+                    }
+                  })
+                },
+                error => {
+                  
+                  this.modalService.error({
+                    nzTitle: "Error",
+                    nzContent: error.message
+                  })
+                  this.loadingBtn = false;
+                }
+              )
+            }else{
               this.eventService.postCreate(formData).subscribe(
                 res => {
                   this.loadingBtn = false;
@@ -207,9 +278,6 @@ export class EventAddComponent implements OnInit {
                   this.loadingBtn = false;
                 }
               )
-
-            }else{
-              this.msg.error("Subir una imagen como avatar")
             }
           } catch (error) {
             this.loadingBtn = false;

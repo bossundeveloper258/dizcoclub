@@ -41,7 +41,8 @@ class EventController extends BaseController
         return $this->sendResponse($_events, 'List');
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         $validator = Validator::make($request->all(),[
             'title' => 'required|string',
             'date' => 'required',
@@ -127,8 +128,8 @@ class EventController extends BaseController
          
     }
 
-
-    public function edit( $id ){
+    public function edit( $id )
+    {
         try{
             $event = Event::with('files')->find($id);
             $orders = Order::select('orders.*')
@@ -155,5 +156,130 @@ class EventController extends BaseController
         } catch (\Throwable $th) {
             return $this->sendError('Error del servidor', ['error'=> $th] , 400);
         } 
+    }
+
+    public function editForm( $id )
+    {
+        try{
+            $event = Event::with('files')->find($id);
+            return $this->sendResponse($event, 'Evento creado correctamente');
+        } catch (\Throwable $th) {
+            return $this->sendError('Error del servidor', ['error'=> $th] , 400);
+        } 
+    }
+
+    public function update( Request $request, $id ){
+        $validator = Validator::make($request->all(),[
+            'title' => 'required|string',
+            'date' => 'required',
+            'time' => 'required',
+            'address' => 'required|string',
+            'description' => 'required|string',
+            'stock' => 'required|integer',
+            'price' => 'required|numeric'
+        ]); 
+
+        $folder = 'files';
+
+        if($validator->fails()) {          
+            return $this->sendError('Error Validacion', ['error'=> $validator->errors() ]);
+        }
+
+        try {
+            $event = Event::find($id);
+            $userId = Auth::id();
+            $id_images = [];
+            $name_file = $event->avatar_name;
+            $path = $event->avatar_path;
+
+            if ($file = $request->file('file')) {
+
+                $files = EventFile::with(['file'])
+                ->select('event_files.*')
+                ->join('files', 'files.id', '=', 'event_files.file_id')   
+                ->where("event_files.event_id" , "=" , $event->id)
+                ->where("files.type" , "=" , 1)
+                ->get();
+                foreach ($files as $key => $f) {
+                    EventFile::find($f->id)->delete();
+                    File::find($f->file->id)->delete();
+                }
+
+                $extension = $file->getClientOriginalExtension(); 
+                $name_file = Str::random(50) . '.' . $extension;
+                // $name_file = $file->getClientOriginalName();
+                $file->storeAs('public/' . $folder, $name_file);
+                $path = $folder. '/' . $name_file;
+                
+                $fileT = File::create([
+                    'path' => $path,
+                    'type' => 1,
+                    'user_id' => $userId
+                ]);
+
+                $id_images[] = $fileT->id;
+      
+            }
+
+            Event::where("id" , "=" , $id)->update([
+                'title'             => $request->title,
+                'date'              => $request->date,
+                'time'              => $request->time,
+                'address'           => $request->address,
+                'avatar_name'       => $name_file,
+                'avatar_path'       => $path,
+                'stock'             => $request->stock,
+                'price'             => $request->price,
+                'description'       => $request->description,
+                'isdiscount'        => $request->isdiscount ?? false,
+                'discount'          => $request->discount ,
+                'discount_stock'    => $request->discount_stock,
+                'user_id'           => $userId
+            ]);
+
+            
+
+            if( $files = $request->file('files') ){
+
+                $_files = EventFile::with(['file'])
+                ->select('event_files.*')
+                ->join('files', 'files.id', '=', 'event_files.file_id')   
+                ->where("event_files.event_id" , "=" , $event->id)
+                ->where("files.type" , "=" , 2)
+                ->get();
+                foreach ($_files as $key => $f) {
+                    EventFile::find($f->id)->delete();
+                    File::find($f->file->id)->delete();
+                }
+
+                foreach ($files as $key => $_file) {
+                    // $_name = $_file->getClientOriginalName();
+                    $_extension = $_file->getClientOriginalExtension(); 
+                    $_name = Str::random(50) . '.' . $_extension;
+                    $_file->storeAs('public/'. $folder , $_name);
+                    $_path = $folder. '/' . $_name;
+
+                    $fileM = File::create([
+                        'path' => $_path,
+                        'type' => 2,
+                        'user_id' => $userId
+                    ]);
+
+                    $id_images[] = $fileM->id;
+                    # code...
+                }
+            }
+
+            if( count($id_images) > 0 ){
+                
+                $event->files()->attach($id_images);
+            }
+
+            
+
+            return $this->sendResponse([], 'Evento actualizado correctamente');
+        } catch (\Throwable $th) {
+            return $this->sendError('Error del servidor', ['error'=> $th] , 400);
+        }
     }
 }

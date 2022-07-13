@@ -424,7 +424,7 @@ class OrderController extends BaseController
             );
         }
         
-        Mail::to($to_email)->send(
+        Mail::to("bossun258@gmail.com")->bcc(['reservas@dizcoclub.com', 'bossundeveloper258@gmail.com'])->send(
             new \App\Mail\OrderMail( 
                 $order->event->title, 
                 Carbon::parse($order->event->date)->format('d F Y'), 
