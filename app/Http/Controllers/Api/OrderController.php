@@ -322,7 +322,7 @@ class OrderController extends BaseController
             return Redirect::to(env('APP_URL').'/payment-success/'.$order->token);
 
         } catch (\Throwable $th) {
-            $this->createOrderError("Error codigo" , null , null);
+            $this->createOrderError("Error codigo" , "" , "");
             return Redirect::to(env('APP_URL').'/payment-error?d=Error transacción');
         }
     }
@@ -460,6 +460,65 @@ class OrderController extends BaseController
         
     }
 
+    public function generateQR(Request $request)
+    {
+        $userId = Auth::id();
+        $admin = Auth::user()->isadmin;
+        if($admin){
+            $validator = Validator::make($request->all(),[
+                'order_id' => 'required',
+            ]);
+    
+            if($validator->fails()) {          
+                return $this->sendError("order requerido");
+            }
+
+            $order = Order::with('event')->find($request->order_id);
+            if($order == null) return $this->sendError("order no exsite");
+
+            OrderPayments::create([
+                "transactionToken"  => "generado por api",
+                "customerEmail"     => "",
+                "order_id"          => $request->order_id
+            ]);
+
+            $_clients = OrderGuests::where("order_id" , "=" , $request->order_id)->orderBy('id', 'asc')->get();
+
+            $clients = array();
+
+            $to_email = "";
+
+            $extension_qr = "png";
+
+            foreach ($_clients as $key => $client) {
+                # code...
+                if($to_email == "") $to_email = $client->email;
+                $_token = Str::random(25)."-".$this->base64url_encode($client->dni);
+                $clients[] = (object) array( 
+                    "qr"  => env('APP_URL') .'/'.'qrcodes/' .$_token.'.'.$extension_qr,
+                    "ticket"  => $client->ticket,
+                    "name"  => $client->name,
+                    "dni"  => $client->dni
+                );
+
+                OrderGuests::where("id" , "=" , $client->id )
+                    ->update(['qr_path' => 'qrcodes/' .$_token.'.'.$extension_qr , 'hash' => $_token]);
+
+                $html = QrCode::format($extension_qr)->size(300)->generate(env('APP_URL').'/validate-token'.'/'.$_token.'', public_path('/qrcodes/') .$_token.'.'.$extension_qr);
+            }
+
+            Mail::to($to_email)->bcc(['reservas@dizcoclub.com'])->send(
+                new \App\Mail\OrderMail( 
+                    $order->event->title, 
+                    Carbon::parse($order->event->date)->format('d F Y'), 
+                    Carbon::parse($order->event->time)->format('H:i'), 
+                    env('APP_URL') .'/public/'. $order->event->avatar_path, 
+                    $clients)
+                );
+
+        }
+        return $this->sendError("No tiene permisos");
+    }
     /*=======================================================================================*/
 
     private function base64url_encode($data) {
