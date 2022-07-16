@@ -47,6 +47,9 @@ export class EventDetailComponent implements OnInit {
         this.loading = false;
         let _totalSctock = this.event.orders.reduce((c, obj) => { return c + obj.q } ,0);
         this.stockTotal = this.event.stock - _totalSctock;
+        if( this.stockTotal < 1){
+          this.loadingBtn = true;
+        }
       },
       error => {
         this.loading = false;

@@ -70,7 +70,10 @@ export class EnventGuestsComponent implements OnInit {
     
     this.guestsArray = this.validateForm.get('guestList') as FormArray;
 
+
+    
   }
+
 
   ngOnInit(): void {
     if(this.quantity > 1){
@@ -91,17 +94,19 @@ export class EnventGuestsComponent implements OnInit {
     if (this.isFormValid()) {
 
       const _body = this.validateForm.get('guestList')?.value;
-
+      console.log(_body)
       let body = [];
-      if(this.user && this.quantity > 1 ){
+      if(this.user && this.quantity > 1  ){
         let g = [
           { name: this.user?.name , lastname: "" , email: this.user?.email, dni: this.user?.dni}
         ]
         body = g.concat(_body);
+       
       }else{
         body = _body;
       }
-
+      console.log(body)
+      return
       this.loading = true;
       this.loadingDisabled = true;
       this.orderService.postCreate({

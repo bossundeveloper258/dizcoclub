@@ -6,7 +6,7 @@
         <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
             <div nz-row class="">
                 <div nz-col nzSpan="24" class="mb-2" formArrayName="guestList">
-                    <ng-container *ngFor="let q of guestsArray.controls;let i = index" [formGroupName]="i">
+                    <ng-container *ngFor="let q of guestsArray.controls;let i = index" [formGroupName]="i" >
                         <div class="mb-2">
                             <div nz-row class="">
                                 <div nz-col nzSpan="24" class="mb-2">
@@ -19,14 +19,14 @@
                                 <div nz-col nzSpan="12" class="mb-1 pe-3">
                                     <nz-form-item class="mb-0">
                                         <nz-form-control  nzErrorTip="Campo requerido">
-                                        <input nz-input formControlName="name" id="name" class="form-control" placeholder="Nombre"/>
+                                        <input nz-input formControlName="name" class="form-control" placeholder="Nombre"/>
                                         </nz-form-control>
                                     </nz-form-item>
                                 </div>
                                 <div nz-col nzSpan="12" class="mb-1">
                                     <nz-form-item class="mb-0">
                                         <nz-form-control  nzErrorTip="Campo requerido">
-                                        <input nz-input formControlName="lastname" id="lastname" class="form-control" placeholder="Apellido"/>
+                                        <input nz-input formControlName="lastname" class="form-control" placeholder="Apellido"/>
                                         </nz-form-control>
                                     </nz-form-item>
                                 </div>
@@ -35,7 +35,7 @@
                                 <div nz-col nzSpan="24" class="mb-2">
                                     <nz-form-item class="mb-0">
                                         <nz-form-control  nzErrorTip="Campo requerido">
-                                            <input nz-input formControlName="email" id="email" class="form-control" placeholder="Email" />
+                                            <input nz-input formControlName="email" class="form-control" placeholder="Email" />
                                         </nz-form-control>
                                     </nz-form-item>
                                 </div>
@@ -44,7 +44,7 @@
                                 <div nz-col nzSpan="24" class="mb-2">
                                     <nz-form-item class="mb-0">
                                         <nz-form-control  [nzErrorTip]="errorDNI">
-                                        <input nz-input formControlName="dni" id="dni" class="form-control" placeholder="DNI"/>
+                                        <input nz-input formControlName="dni" class="form-control" placeholder="DNI"/>
                                         </nz-form-control>
                                     </nz-form-item>
                                     <ng-template #errorDNI let-control>
