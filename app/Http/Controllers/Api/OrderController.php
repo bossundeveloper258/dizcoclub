@@ -515,7 +515,7 @@ class OrderController extends BaseController
                     env('APP_URL') .'/public/'. $order->event->avatar_path, 
                     $clients)
                 );
-
+            return $this->sendResponse([], "Enviado correctamente");
         }
         return $this->sendError("No tiene permisos");
     }
