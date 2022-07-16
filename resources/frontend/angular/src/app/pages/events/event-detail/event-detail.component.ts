@@ -43,13 +43,15 @@ export class EventDetailComponent implements OnInit {
     this.eventService.getById(this.eventId).subscribe(
       res => {
         this.event = res;
-        this.calculateTotal();
+        
         this.loading = false;
         let _totalSctock = this.event.orders.reduce((c, obj) => { return c + obj.q } ,0);
-        this.stockTotal = this.event.stock - _totalSctock;
+        this.stockTotal = this.event.stock - _totalSctock - 1;
         if( this.stockTotal < 1){
           this.loadingBtn = true;
+          this.stockTotal = 0;
         }
+        this.calculateTotal();
       },
       error => {
         this.loading = false;
@@ -81,7 +83,11 @@ export class EventDetailComponent implements OnInit {
     }
 
     this.total = parseFloat(this.total).toFixed(2);
-    
+    if( this.stockTotal < 1){
+      this.loadingBtn = true;
+    }else{
+      this.loadingBtn = false;
+    }
   }
 
   onSubmit(){

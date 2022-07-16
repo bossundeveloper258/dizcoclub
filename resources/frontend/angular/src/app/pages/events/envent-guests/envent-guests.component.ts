@@ -74,16 +74,20 @@ export class EnventGuestsComponent implements OnInit {
     
   }
 
+  private createGuest():FormGroup{
+
+    return this.fb.group({
+      name: ["" , [Validators.required]],
+      lastname: ["" ],
+      dni: ["" , [Validators.required, Validators.maxLength(8), Validators.pattern("^[0-9]*$")]]
+    })
+  }
 
   ngOnInit(): void {
     if(this.quantity > 1){
-      const formGroup:FormGroup = this.fb.group({
-        name: ["" , [Validators.required]],
-        lastname: ["" ],
-        dni: ["" , [Validators.required, Validators.maxLength(8), Validators.pattern("^[0-9]*$")]]
-      });
+      
       for (let i = 1; i <= this.quantity - 1; i++) {
-        this.guestsArray.push(formGroup);
+        this.guestsArray.push(this.createGuest());
       }
       
     }
@@ -105,8 +109,7 @@ export class EnventGuestsComponent implements OnInit {
       }else{
         body = _body;
       }
-      console.log(body)
-      return
+
       this.loading = true;
       this.loadingDisabled = true;
       this.orderService.postCreate({
@@ -153,7 +156,7 @@ export class EnventGuestsComponent implements OnInit {
 
       
     } else {
-      console.log("error Validate")
+      
       const control = this.validateForm.get('guestList') as FormArray;
       for (const i in control.controls) {
         const controlTwo = control.controls[i] as FormGroup;
@@ -164,6 +167,10 @@ export class EnventGuestsComponent implements OnInit {
           controlTwo.controls[k].updateValueAndValidity({onlySelf:false});
         }
       }
+      this.modalService.error({
+        nzTitle: "Info",
+        nzContent: "Corregir lo campos validados"
+      });
       
     }
   
