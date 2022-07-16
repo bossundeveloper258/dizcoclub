@@ -464,7 +464,7 @@ class OrderController extends BaseController
     {
         $userId = Auth::id();
         $admin = Auth::user()->isadmin;
-        if($admin){
+        if($admin == 1){
             $validator = Validator::make($request->all(),[
                 'order_id' => 'required',
             ]);
