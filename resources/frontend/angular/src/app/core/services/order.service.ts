@@ -33,8 +33,8 @@ export class OrderService {
     );
   }
 
-  public getTickets(filter: number): Observable<any>{
-    return this.httpClient.get<ResponseModal>(this.apiURL+"/tickets?filter="+filter)
+  public getTickets(event: string): Observable<any>{
+    return this.httpClient.get<ResponseModal>(this.apiURL+"/tickets?event="+event)
     .pipe(
       map( (res: ResponseModal ) => res.data ),
       catchError(errorHandler)
@@ -53,6 +53,14 @@ export class OrderService {
     return this.httpClient.post<ResponseModal>(this.apiURL+"/tickets/assist", {id: token})
     .pipe(
       map( (res: ResponseModal ) => res.data ),
+      catchError(errorHandler)
+    );
+  }
+
+  public getExportTicket(id: string): Observable<any>{
+    return this.httpClient.get<any>(this.apiURL+'/tickets/export?event='+id , { responseType: 'blob' as 'json' })
+    .pipe(
+      map( (res: any ) => res ),
       catchError(errorHandler)
     );
   }

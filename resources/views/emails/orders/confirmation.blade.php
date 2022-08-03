@@ -37,7 +37,13 @@
         @import url(http://fonts.googleapis.com/css?family=Raleway:800,500);
         -->
         </STYLE>
-        
+        <tr>
+            <td bgcolor="#e94985">  
+                <div style="width: 100%; text-align:center; padding-bottom: 50px;">
+                    <img src="https://dizcoclub.com/assets/angular/assets/img/LOGO.png" alt="" style="margin-bottom: 15px;" width="350px">
+                </div>
+            </td>
+        </tr>
         <tr>
             <td bgcolor="#e94985">  
                 @foreach ($clients as $client)
@@ -75,6 +81,13 @@
                     <p style="font-size: 18px;font-weight: 600;font-family:Arial, Helvetica, sans-serif;color: #FFFFFF; margin-bottom:0; margin-top:15px;text-align: center;">
                         Ingreso antes de las {{ $hour }}
                     </p>
+                    <p style="font-size: 18px;font-weight: 600;font-family:Arial, Helvetica, sans-serif;color: #FFFFFF; margin-bottom:0; margin-top:15px;text-align: center;">
+                        *No valido devoluciones
+                    </p>
+                    <p style="font-size: 18px;font-weight: 600;font-family:Arial, Helvetica, sans-serif;color: #FFFFFF; margin-bottom:0; margin-top:15px;text-align: center;">
+                        *Presentar DNI fisico
+                    </p>
+                    
                 </div>
                 <div style="text-align: center; width: 100%;padding-top: 3rem;">
                 </div>

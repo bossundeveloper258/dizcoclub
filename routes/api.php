@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\Mail;
 |
 */
 
+ob_start();
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
@@ -37,6 +39,16 @@ Route::group([
     });
 });
 
+Route::group([
+    'prefix' => 'events',
+    'middleware' => 'auth:api'
+  ], function() {
+    Route::get('find-all', [EventController::class, 'findAll']);
+    Route::post('', [EventController::class, 'store']);
+    Route::get('form/{id}', [EventController::class, 'editForm']);
+    Route::post('update/{id}', [EventController::class, 'update']);
+});
+
 Route::get('events', [EventController::class, 'index']);
 Route::get('events/{id}', [EventController::class, 'edit']);
 
@@ -46,22 +58,15 @@ Route::post('orders/options', [OrderController::class, 'paymentOptions']);
 Route::post('orders/payment', [OrderController::class, 'payment']);
 Route::post('orders/success', [OrderController::class, 'paymentSuccess']);
 
-Route::group([
-    'prefix' => 'events',
-    'middleware' => 'auth:api'
-  ], function() {
-    
-    Route::post('', [EventController::class, 'store']);
-    Route::get('form/{id}', [EventController::class, 'editForm']);
-    Route::post('update/{id}', [EventController::class, 'update']);
-});
 
+Route::get('orders/tickets/export', [OrderController::class, 'orderClientsExport']);
 Route::group([
     'prefix' => 'orders',
     'middleware' => 'auth:api'
   ], function() {
     
     Route::get('tickets', [OrderController::class, 'tickets']);
+    
     Route::post('tickets/assist', [OrderController::class, 'assist']);
     Route::post('tickets/generate', [OrderController::class, 'generateQR']);
     Route::get('tickets/{token}', [OrderController::class, 'ticketByToken']);

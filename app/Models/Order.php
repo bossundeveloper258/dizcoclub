@@ -16,7 +16,9 @@ class Order extends Model
         'user_id', 
         'quantity',
         'total', 
-        'token'
+        'token',
+        'discount',
+        'total_price'
     ];
 
     protected $hidden = [

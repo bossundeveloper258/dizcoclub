@@ -16,34 +16,76 @@ export class TicketsComponent implements OnInit {
   tickets: any[] = [];
   routeStorage = environment.storageUrl;
   loading: boolean = true;
+  loadingEvent: boolean = true;
   user!: UserModel;
+  events: EventModel[] = [];
+  selectedEvent: any;
   
   constructor(
     private orderService: OrderService,
     private storageService: StorageService,
+    private eventService: EventService
   ) { 
     this.user = this.storageService.getUser();
   }
 
   ngOnInit(): void {
-    
-    this.getAllTickets(0);
+    this.getAllEvent();
   }
 
   onChangeTab(tab: any){
     console.log()
     this.getAllTickets(tab.index);
+    
   }
 
-  getAllTickets(filter: number){
+  getAllTickets(event: string){
     this.loading = true;
-    this.orderService.getTickets(filter).subscribe(
+    this.orderService.getTickets(event).subscribe(
       res => {
         this.loading = false;
         this.tickets = res;
       },
       error => {
         this.loading = false;
+      }
+    )
+  }
+
+  getAllEvent(){
+    this.loadingEvent = true;
+    this.eventService.getFindAll().subscribe(
+      res => {
+        this.events = res;
+        this.loadingEvent = false;
+        this.selectedEvent = this.events[0].id;
+        if(this.user?.isadmin){
+          this.getAllTickets(this.events[0].id.toString());
+        }else{
+          this.getAllTickets('');
+        }
+      },
+      error => {
+        this.events = [];
+      }
+    )
+  }
+
+  onChangeEvent(e: any){
+    this.getAllTickets(e.toString());
+  }
+
+  onDownload(){
+    this.orderService.getExportTicket( this.selectedEvent ).subscribe(
+      response => {
+        const title = this.events.find( e => e.id == this.selectedEvent )?.title;
+        var _data = response;
+        var _blob = new Blob([_data], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+
+        var link = document.createElement('a');
+        link.href = window.URL.createObjectURL(_blob);
+        link.download = title+'.xlsx';
+        link.click();
       }
     )
   }

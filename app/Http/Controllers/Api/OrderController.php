@@ -19,7 +19,9 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Facades\Mail;
-
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\OrderGuestsEventExport;
+use App\Exports\OrdersEventExport;
 class OrderController extends BaseController
 {
     //
@@ -65,23 +67,28 @@ class OrderController extends BaseController
     {
         $event = Event::find($event_id);
         if(!$event) return $this->sendError('Evento no existe', ['error'=> []] , 400);
-        
+        $isdiscount = false;
         $now = strtotime(Carbon::now());
         $event_date = strtotime($event->date .' '. $event->time);
 
         $date = Carbon::now();
         $date_event = Carbon::parse(  $event->date)->subDays(3);
-        if($event->isdiscount){
+        if($event->isdiscount == 1){
             if( strtotime( $date ) > strtotime($date_event) ){
-                $event["isdiscount"] = false;
+                $event["isdiscount"] = 0;
             }
         }
 
-        if($now >= $event_date) return  array("calculate"=> false , "total"=> 0 ,"message" => 'El Evento ya inicio, no se puedo realizar compra');
+        if($now >= $event_date) return  array(
+            "calculate"=> false , 
+            "total"=> 0 ,
+            "message" => 'El Evento ya inicio, no se puedo realizar compra'
+        );
         
         $totalAmount = $event->price * $total;
 
-        if($event->isdiscount){
+        if($event->isdiscount == 1){
+            $isdiscount = true;
             $orders = Order::select('orders.*')
                 ->join('order_payments', 'order_payments.order_id', '=', 'orders.id')    
                 ->where('event_id', '=' , $event->id)->get();
@@ -94,13 +101,21 @@ class OrderController extends BaseController
             $q_total_disponible = $event->stock - $q;
 
             if( $q_total_disponible <= $total){
-                return array("calculate"=> false , "total"=> 0 ,"message" => 'Supera la cantidad permitira de promocion');
+                return array(
+                    "calculate"=> false , 
+                    "total"=> 0 ,"message" => 
+                    'Supera la cantidad permitira de promocion'
+                );
             }else{
                 $totalAmount = ($event->price * $total) * ( 1 -($event->discount / 100)) ;
             }
         }
 
-        return  array("calculate"=> true , "total"=> number_format((float)$totalAmount, 2, '.', '') ,"message" => '');
+        return  array(
+            "calculate" => true , 
+            "total"     => number_format((float)$totalAmount, 2, '.', '') ,
+            "message"   => '',
+            "isdiscount" => $isdiscount);
     }
 
     public function store(Request $request)
@@ -121,7 +136,9 @@ class OrderController extends BaseController
         try {
             $event = Event::find($request->event_id);
             if(!$event) return $this->sendError('Evento no existe', ['error'=> []] , 400);
-            
+
+            $calculate = $this->calculateAmount($request->event_id, $request->quantity);
+
             $now = strtotime(Carbon::now());
             $event_date = strtotime($event->date .' '. $event->time);
 
@@ -129,7 +146,7 @@ class OrderController extends BaseController
             
             $orders = Order::where('event_id', '=' , $event->id)->get();
             
-            if($event->isdiscount){
+            if($event->isdiscount == 1){
                 $q = 0;
                 foreach ($orders as $key => $order) 
                 {
@@ -159,8 +176,10 @@ class OrderController extends BaseController
                 'event_id'      => $event->id,
                 'user_id'       => $userId ? $userId : null,
                 'quantity'      => $request->quantity,
-                'total'         => $request->quantity * $event->price,
+                'total'         => $calculate["total"],
                 'token'         => $cryp_event,
+                'discount'      => $calculate["isdiscount"],
+                'total_price'   => $request->quantity * $event->price
             ]);
 
             $clients = array();
@@ -203,7 +222,7 @@ class OrderController extends BaseController
             
             $token = $this->generateToken();
 
-            $calculate = $this->calculateAmount($request->event_id, $request->quantity);
+            
 
             
 
@@ -312,7 +331,7 @@ class OrderController extends BaseController
                 new \App\Mail\OrderMail( 
                     $order->event->title, 
                     Carbon::parse($order->event->date)->format('d F Y'), 
-                    Carbon::parse($order->event->time)->format('H:i'), 
+                    Carbon::parse($order->event->time)->addHours(2)->format('H:i'), 
                     env('APP_URL') .'/public/'. $order->event->avatar_path, 
                     $clients)
                 );
@@ -344,14 +363,18 @@ class OrderController extends BaseController
 
     }
 
-    public function tickets()
+    public function tickets( Request $request )
     {
+        $event  = $request->query('event');
+
         $userId = Auth::id();
         $admin = Auth::user()->isadmin;
         $orders = OrderGuests::with(['order', 'order.event'])->select('order_guests.*') 
                 ->join('orders', 'order_guests.order_id', '=', 'orders.id') 
+                ->leftJoin('events', 'events.id', '=', 'orders.event_id')
                 ->join('order_payments', 'order_payments.order_id', '=', 'orders.id');
         if($admin == 0) $orders = $orders->where('orders.user_id', '=' , $userId);
+        if($event != null) $orders = $orders->where('events.id', '=' , $event);
 
         $orders = $orders->get();
         $_tickets = array();        
@@ -428,7 +451,7 @@ class OrderController extends BaseController
             new \App\Mail\OrderMail( 
                 $order->event->title, 
                 Carbon::parse($order->event->date)->format('d F Y'), 
-                Carbon::parse($order->event->time)->format('H:i'), 
+                Carbon::parse($order->event->time)->addHours(2)->format('H:i'), 
                 env('APP_URL') .'/public/'. $order->event->avatar_path, 
                 $clients)
             );
@@ -511,7 +534,7 @@ class OrderController extends BaseController
                 new \App\Mail\OrderMail( 
                     $order->event->title, 
                     Carbon::parse($order->event->date)->format('d F Y'), 
-                    Carbon::parse($order->event->time)->format('H:i'), 
+                    Carbon::parse($order->event->time)->addHours(2)->format('H:i'), 
                     env('APP_URL') .'/public/'. $order->event->avatar_path, 
                     $clients)
                 );
@@ -519,6 +542,16 @@ class OrderController extends BaseController
         }
         return $this->sendError("No tiene permisos");
     }
+
+    public function orderClientsExport(Request $request)
+    {
+        
+        $event = $request->query('event');
+        $excel = Excel::download(new OrderGuestsEventExport($event), 'clientes.xlsx' );
+        ob_end_clean();
+        return $excel;
+    }
+
     /*=======================================================================================*/
 
     private function base64url_encode($data) {

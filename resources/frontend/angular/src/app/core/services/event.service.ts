@@ -31,6 +31,14 @@ export class EventService {
     );
   }
 
+  public getFindAll(): Observable<EventModel[]>{
+    return this.httpClient.get<ResponseModal>(this.apiURL+'/find-all')
+    .pipe(
+      map( (res: ResponseModal ) => res.data ),
+      catchError(errorHandler)
+    );
+  }
+
   public postCreate(body: any): Observable<any>{
     return this.httpClient.post<ResponseModal>(this.apiURL, body )
     .pipe(
@@ -62,4 +70,7 @@ export class EventService {
       catchError(errorHandler)
     );
   }
+
+  
+
 }

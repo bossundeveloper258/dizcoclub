@@ -41,6 +41,14 @@ class EventController extends BaseController
         return $this->sendResponse($_events, 'List');
     }
 
+    public function findAll()
+    {
+        $events = Event::with('files')
+            ->orderBy('date', 'desc')
+            ->get();
+        return $this->sendResponse($events, 'List');
+    }
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(),[
