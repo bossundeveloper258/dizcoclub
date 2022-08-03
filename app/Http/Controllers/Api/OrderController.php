@@ -552,6 +552,15 @@ class OrderController extends BaseController
         return $excel;
     }
 
+    public function ordersExport(Request $request)
+    {
+        
+        $event = $request->query('event');
+        $excel = Excel::download(new OrdersEventExport($event), 'orders.xlsx' );
+        ob_end_clean();
+        return $excel;
+    }
+
     /*=======================================================================================*/
 
     private function base64url_encode($data) {

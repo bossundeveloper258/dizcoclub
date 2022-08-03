@@ -5,7 +5,10 @@ namespace App\Exports;
 use App\Models\OrderGuests;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-class OrderGuestsEventExport implements FromCollection, WithHeadings
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Events\AfterSheet;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+class OrderGuestsEventExport implements FromCollection, WithHeadings, ShouldAutoSize, WithEvents
 {
 
     public $event;
@@ -47,5 +50,36 @@ class OrderGuestsEventExport implements FromCollection, WithHeadings
                 ->get();
 
         return $orders;
+    }
+
+    public function registerEvents(): array
+    {
+        
+        
+        return [
+            AfterSheet::class  => function(AfterSheet $event) {
+
+                $stylesArray = [
+                    'borders' => [
+                        // 'allBorders' => [
+                        //     'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
+                        //     'color' => ['argb' => 'FFFFFF'],
+                        // ],
+                    ],
+                    'font' => [
+                        'bold' => true,
+                        'color' => ['argb' => 'FFFFFF'],
+                    ],
+                    'fill' => [
+                        'fillType'  => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                        'startColor' => ['rgb' => 'E94985']
+                    ]
+                ];
+
+                $cellRange = 'A1:F1'; // All headers
+
+                $event->sheet->getDelegate()->getStyle($cellRange)->applyFromArray($stylesArray);
+            },
+        ];
     }
 }

@@ -4,14 +4,15 @@
     </div>
     
     <div nz-row class="pt-4" >
-        <div nz-col nzSpan="20" class="px-3 mb-3" *ngIf="user.isadmin">
+        <div nz-col nzSpan="16" class="px-3 mb-3" *ngIf="user.isadmin">
             <nz-select class="w-100" nzShowSearch nzAllowClear nzPlaceHolder="Seleccionar evento" [(ngModel)]="selectedEvent" [nzLoading]="loadingEvent" (ngModelChange)="onChangeEvent($event)">
                 <nz-option [nzLabel]="event.title" [nzValue]="event.id" *ngFor="let event of events"></nz-option>
             </nz-select>
             
         </div>
-        <div nz-col nzSpan="4" class="px-3 mb-3" *ngIf="user.isadmin">
-            <i nz-icon nzType="cloud-download" nzTheme="outline" (click)="onDownload()" style="font-size: 26px; color: #08c;"></i>
+        <div nz-col nzSpan="8" class="px-3 mb-3 text-center" *ngIf="user.isadmin">
+            <i nz-icon nzType="cloud-download" nzTheme="outline" (click)="onDownload()" style="font-size: 26px; color: #08c; margin-right: 10px;"></i>
+            <i nz-icon nzType="file-markdown" nzTheme="outline" (click)="onDownloadOrder()" style="font-size: 26px; color: #08c;"></i>
         </div>
         <div nz-col nzSpan="24" class="px-3" *ngIf="!loading">
 

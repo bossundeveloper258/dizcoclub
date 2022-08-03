@@ -59,14 +59,14 @@ Route::post('orders/payment', [OrderController::class, 'payment']);
 Route::post('orders/success', [OrderController::class, 'paymentSuccess']);
 
 
-Route::get('orders/tickets/export', [OrderController::class, 'orderClientsExport']);
+
 Route::group([
     'prefix' => 'orders',
     'middleware' => 'auth:api'
   ], function() {
-    
+    Route::get('export', [OrderController::class, 'ordersExport']);
     Route::get('tickets', [OrderController::class, 'tickets']);
-    
+    Route::get('tickets/export', [OrderController::class, 'orderClientsExport']);
     Route::post('tickets/assist', [OrderController::class, 'assist']);
     Route::post('tickets/generate', [OrderController::class, 'generateQR']);
     Route::get('tickets/{token}', [OrderController::class, 'ticketByToken']);

@@ -64,5 +64,12 @@ export class OrderService {
       catchError(errorHandler)
     );
   }
+  public getExportOrder(id: string): Observable<any>{
+    return this.httpClient.get<any>(this.apiURL+'/export?event='+id , { responseType: 'blob' as 'json' })
+    .pipe(
+      map( (res: any ) => res ),
+      catchError(errorHandler)
+    );
+  }
 
 }

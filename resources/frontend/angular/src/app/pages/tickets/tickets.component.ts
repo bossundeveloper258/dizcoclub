@@ -89,4 +89,19 @@ export class TicketsComponent implements OnInit {
       }
     )
   }
+
+  onDownloadOrder(){
+    this.orderService.getExportOrder( this.selectedEvent ).subscribe(
+      response => {
+        const title = this.events.find( e => e.id == this.selectedEvent )?.title;
+        var _data = response;
+        var _blob = new Blob([_data], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+
+        var link = document.createElement('a');
+        link.href = window.URL.createObjectURL(_blob);
+        link.download = title+'-orden.xlsx';
+        link.click();
+      }
+    )
+  }
 }
