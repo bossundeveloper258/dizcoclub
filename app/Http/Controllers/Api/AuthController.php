@@ -34,19 +34,27 @@ class AuthController  extends BaseController
 
     public function login(Request $request)
     {
+
         $request->validate([
             'email' => 'required|string|email',
             'password' => 'required|string',
             'remember_me' => 'boolean'
         ]);
 
+
+
         $credentials = request(['email', 'password']);
 
         if (!Auth::attempt($credentials))
             return $this->sendError('Usurio o contraseña incorrectas.', ['error'=>'Unauthorised']);
 
-        $user = Auth::user();
+        $_user = Auth::user();
+        $user = User::find( $_user->id );
+
+
+
         $token = $user->createToken('MyApp')->accessToken;
+
             // var_dump($tokenResult->accessToken->token);
         // if ($request->remember_me)
         //     $token->expires_at = Carbon::now()->addWeeks(1);
@@ -60,6 +68,7 @@ class AuthController  extends BaseController
 
     public function logout(Request $request)
     {
+        return $this->sendResponse(array(), 'ssss.');
         $request->user()->token()->revoke();
 
         return $this->sendResponse([], 'Cerrar sesión con éxito');

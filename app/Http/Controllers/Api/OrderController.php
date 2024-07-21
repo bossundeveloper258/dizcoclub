@@ -42,7 +42,7 @@ class OrderController extends BaseController
             'event_id' => 'required',
         ]);
 
-        if($validator->fails()) {          
+        if($validator->fails()) {
             return $this->sendError('Error Validacion', ['error'=> $validator->errors() ]);
         }
 
@@ -60,7 +60,7 @@ class OrderController extends BaseController
             return $this->sendError( $calculate["message"], ['error'=> []] , 400);
         }
 
-       
+
     }
 
     private function calculateAmount($event_id ,  $total)
@@ -80,20 +80,20 @@ class OrderController extends BaseController
         }
 
         if($now >= $event_date) return  array(
-            "calculate"=> false , 
+            "calculate"=> false ,
             "total"=> 0 ,
             "message" => 'El Evento ya inicio, no se puedo realizar compra'
         );
-        
+
         $totalAmount = $event->price * $total;
 
         if($event->isdiscount == 1){
             $isdiscount = true;
             $orders = Order::select('orders.*')
-                ->join('order_payments', 'order_payments.order_id', '=', 'orders.id')    
+                ->join('order_payments', 'order_payments.order_id', '=', 'orders.id')
                 ->where('event_id', '=' , $event->id)->get();
             $q = 0;
-            foreach ($orders as $key => $order) 
+            foreach ($orders as $key => $order)
             {
                 $q += $order->quantity;
             }
@@ -102,8 +102,8 @@ class OrderController extends BaseController
 
             if( $q_total_disponible <= $total){
                 return array(
-                    "calculate"=> false , 
-                    "total"=> 0 ,"message" => 
+                    "calculate"=> false ,
+                    "total"=> 0 ,"message" =>
                     'Supera la cantidad permitira de promocion'
                 );
             }else{
@@ -112,7 +112,7 @@ class OrderController extends BaseController
         }
 
         return  array(
-            "calculate" => true , 
+            "calculate" => true ,
             "total"     => number_format((float)$totalAmount, 2, '.', '') ,
             "message"   => '',
             "isdiscount" => $isdiscount);
@@ -128,8 +128,8 @@ class OrderController extends BaseController
             // 'clients.*.lastname' => 'required|string',
             'clients.*.dni' => 'required|string',
         ]);
-        
-        if($validator->fails()) {          
+
+        if($validator->fails()) {
             return $this->sendError('Error Validacion', ['error'=> $validator->errors() ]);
         }
 
@@ -143,22 +143,22 @@ class OrderController extends BaseController
             $event_date = strtotime($event->date .' '. $event->time);
 
             if($now >= $event_date) return $this->sendError('El Evento ya inicio, no se puedo realizar compra', ['error'=> []] , 400);
-            
+
             $orders = Order::where('event_id', '=' , $event->id)->get();
-            
+
             if($event->isdiscount == 1){
                 $q = 0;
-                foreach ($orders as $key => $order) 
+                foreach ($orders as $key => $order)
                 {
                     $q += $order->discount_stock;
                 }
 
                 $q_total_disponible = $event->stock - $q;
 
-                if( $q_total_disponible <= $request->quantity ) return $this->sendError('Supera la cantidad permitira de promocion', ['error'=> []] , 400);                
-                
+                if( $q_total_disponible <= $request->quantity ) return $this->sendError('Supera la cantidad permitira de promocion', ['error'=> []] , 400);
+
             }
-            
+
             $to_email = "";
 
             foreach ($request->clients as $key => $g) {
@@ -171,7 +171,7 @@ class OrderController extends BaseController
             $userId = $request->user_id;
 
             $cryp_event = Crypt::encryptString(json_encode($event));
-            
+
             $order_new = Order::create([
                 'event_id'      => $event->id,
                 'user_id'       => $userId ? $userId : null,
@@ -193,21 +193,21 @@ class OrderController extends BaseController
 
                 $order_g = OrderGuests::create([
                     'order_id'  => $order_new->id,
-                    'name'      => $g['name'], 
+                    'name'      => $g['name'],
                     'lastname'  => isset($g['lastname']) ? $g['lastname'] : "",
                     'email'     => isset($g['email']) ? $g['email'] : "",
-                    'dni'       => $g['dni'], 
+                    'dni'       => $g['dni'],
                     'hash'      => "",
                     'qr_path'   => ""
                 ]);
-                
+
                 $ticket = str_pad( 1000 > $order_g->id ? (1000 + $order_g->id) : $order_g->id, 8, "0", STR_PAD_LEFT);
 
                 OrderGuests::where("id" , "=" , $order_g->id )
                     ->update(['ticket' =>  $ticket]);
-                
+
             }
-            
+
             $codCli = "D".str_pad( "-".$currentDNI, 10, "0", STR_PAD_LEFT);
             $isAuth = $userId ? true : false;
             $diffdate = 0;
@@ -219,12 +219,12 @@ class OrderController extends BaseController
 
                 $diffdate = $date->diffInDays($now);
             }
-            
+
             $token = $this->generateToken();
 
-            
 
-            
+
+
 
             $totalAmount = 0;
 
@@ -239,11 +239,11 @@ class OrderController extends BaseController
             $session = $this->generateSesion($totalAmount , $token, $currentEmail, $codCli, $isAuth, $diffdate, $currentDNI);
 
             return $this->sendResponse(
-                array( 
+                array(
                     "session" => $session,
                     "order" => $order_new->id,
                     "merchantid"        => config('visa.VISA_MERCHANT_ID')
-            ), 
+            ),
                 'Orden creado correctamente');
 
         } catch (\Throwable $th) {
@@ -253,13 +253,13 @@ class OrderController extends BaseController
 
     public function payment(Request $request){
 
-        // 
+        //
         $validator = Validator::make($request->all(),[
             'transactionToken' => 'required',
             'customerEmail'=> 'required',
         ]);
 
-        if($validator->fails()) {          
+        if($validator->fails()) {
             $this->createOrderError($request->description , null , null);
             return Redirect::to(env('APP_URL').'/payment-error?d='.$request->description);
         }
@@ -270,7 +270,7 @@ class OrderController extends BaseController
         $token = $this->generateToken();
 
         try {
-        
+
             if( $orderId == "" ){
                 $this->createOrderError("Orden no creada" , $request->transactionToken , $request->customerEmail);
                 return Redirect::to(env('APP_URL').'/payment-error?d=Orden no creada');
@@ -286,13 +286,13 @@ class OrderController extends BaseController
 
             if( !isset( $authorization->dataMap ) ){
                 $message = isset($authorization->data->ACTION_DESCRIPTION) ?  $authorization->data->ACTION_DESCRIPTION : "Operacion no permitida";
-                $this->createOrderError($message , $request->transactionToken , $request->customerEmail); 
-                return Redirect::to(env('APP_URL').'/payment-error?d='.$message);  
+                $this->createOrderError($message , $request->transactionToken , $request->customerEmail);
+                return Redirect::to(env('APP_URL').'/payment-error?d='.$message);
             }
 
             if( $authorization->dataMap->ACTION_CODE != "000" ){
                 $message = $authorization->dataMap->ACTION_DESCRIPTION;
-                $this->createOrderError($message , $request->transactionToken , $request->customerEmail); 
+                $this->createOrderError($message , $request->transactionToken , $request->customerEmail);
                 return Redirect::to(env('APP_URL').'/payment-error?d='.$message);
             }
 
@@ -314,7 +314,7 @@ class OrderController extends BaseController
                 # code...
                 if($to_email == "") $to_email = $client->email;
                 $_token = Str::random(25)."-".$this->base64url_encode($client->dni);
-                $clients[] = (object) array( 
+                $clients[] = (object) array(
                     "qr"  => env('APP_URL') .'/'.'qrcodes/' .$_token.'.'.$extension_qr,
                     "ticket"  => $client->ticket,
                     "name"  => $client->name,
@@ -328,11 +328,11 @@ class OrderController extends BaseController
             }
 
             Mail::to($to_email)->bcc(['reservas@dizcoclub.com'])->send(
-                new \App\Mail\OrderMail( 
-                    $order->event->title, 
-                    Carbon::parse($order->event->date)->format('d F Y'), 
-                    Carbon::parse($order->event->time)->addHours(2)->format('H:i'), 
-                    env('APP_URL') .'/public/'. $order->event->avatar_path, 
+                new \App\Mail\OrderMail(
+                    $order->event->title,
+                    Carbon::parse($order->event->date)->format('d F Y'),
+                    Carbon::parse($order->event->time)->addHours(2)->format('H:i'),
+                    env('APP_URL') .'/public/'. $order->event->avatar_path,
                     $clients)
                 );
 
@@ -342,7 +342,7 @@ class OrderController extends BaseController
 
         } catch (\Throwable $th) {
             $this->createOrderError("Error codigo" , "" , "");
-            return Redirect::to(env('APP_URL').'/payment-error?d=Error transacción');
+            return Redirect::to(env('APP_URL').'/payment-error?d=Error transacci贸n');
         }
     }
 
@@ -351,7 +351,7 @@ class OrderController extends BaseController
             't' => 'required',
         ]);
 
-        if($validator->fails()) {          
+        if($validator->fails()) {
             return $this->sendError('No existe este pago', ['error'=> []] , 400);
         }
         try {
@@ -369,15 +369,15 @@ class OrderController extends BaseController
 
         $userId = Auth::id();
         $admin = Auth::user()->isadmin;
-        $orders = OrderGuests::with(['order', 'order.event'])->select('order_guests.*') 
-                ->join('orders', 'order_guests.order_id', '=', 'orders.id') 
+        $orders = OrderGuests::with(['order', 'order.event'])->select('order_guests.*')
+                ->join('orders', 'order_guests.order_id', '=', 'orders.id')
                 ->leftJoin('events', 'events.id', '=', 'orders.event_id')
                 ->join('order_payments', 'order_payments.order_id', '=', 'orders.id');
         if($admin == 0) $orders = $orders->where('orders.user_id', '=' , $userId);
         if($event != null) $orders = $orders->where('events.id', '=' , $event);
 
         $orders = $orders->get();
-        $_tickets = array();        
+        $_tickets = array();
         foreach ($orders as $key => $order) {
             $_tickets[] = array(
                 "name" => $order->name,
@@ -401,15 +401,15 @@ class OrderController extends BaseController
 
         $userId = Auth::id();
         $admin = Auth::user()->isadmin;
-        $orders = OrderGuests::with(['order', 'order.event'])->select('order_guests.*') 
-                ->join('orders', 'order_guests.order_id', '=', 'orders.id') 
+        $orders = OrderGuests::with(['order', 'order.event'])->select('order_guests.*')
+                ->join('orders', 'order_guests.order_id', '=', 'orders.id')
                 ->join('order_payments', 'order_payments.order_id', '=', 'orders.id');
         if($admin == 0) $orders = $orders->where('orders.user_id', '=' , $userId);
-        
+
         $orders = $orders->where('order_guests.hash', '=' , $token)
                 ->get();
 
-        $_tickets = array();        
+        $_tickets = array();
         foreach ($orders as $key => $order) {
             $_tickets[] = array(
                 "name" => $order->name,
@@ -439,20 +439,20 @@ class OrderController extends BaseController
         foreach ($_clients as $key => $client) {
 
             if($to_email == "") $to_email = $client->email;
-            $clients[] = (object) array( 
+            $clients[] = (object) array(
                 "qr"  => env('APP_URL') .'/'.$client->qr_path,
                 "ticket"  => $client->ticket,
                 "name"  => $client->name,
                 "dni"  => $client->dni
             );
         }
-        
-        Mail::to("$to_email")->bcc(['reservas@dizcoclub.com'])->send(
-            new \App\Mail\OrderMail( 
-                $order->event->title, 
-                Carbon::parse($order->event->date)->format('d F Y'), 
-                Carbon::parse($order->event->time)->addHours(2)->format('H:i'), 
-                env('APP_URL') .'/public/'. $order->event->avatar_path, 
+
+        Mail::to("$to_email")->bcc(['reservas@dizcoclub.com', 'bossundeveloper258@gmail.com', 'nmunarriz@icloud.com'])->send(
+            new \App\Mail\OrderMail(
+                $order->event->title,
+                Carbon::parse($order->event->date)->format('d F Y'),
+                Carbon::parse($order->event->time)->addHours(2)->format('H:i'),
+                env('APP_URL') .'/public/'. $order->event->avatar_path,
                 $clients)
             );
         return $this->sendResponse([] , '');
@@ -469,8 +469,8 @@ class OrderController extends BaseController
         $validator = Validator::make($request->all(),[
             'id' => 'required',
         ]);
-        
-        if($validator->fails()) {          
+
+        if($validator->fails()) {
             return $this->sendError('Es necesario el token del ticket', ['error'=> $validator->errors() ]);
         }
 
@@ -480,7 +480,7 @@ class OrderController extends BaseController
         OrderGuests::where('hash', '=' , $request->id)->update(['assist' => true]);
 
         return $this->sendResponse([] , 'Se confirmo asistencia del cliente');
-        
+
     }
 
     public function generateQR(Request $request)
@@ -491,8 +491,8 @@ class OrderController extends BaseController
             $validator = Validator::make($request->all(),[
                 'order_id' => 'required',
             ]);
-    
-            if($validator->fails()) {          
+
+            if($validator->fails()) {
                 return $this->sendError("order requerido");
             }
 
@@ -517,7 +517,7 @@ class OrderController extends BaseController
                 # code...
                 if($to_email == "") $to_email = $client->email;
                 $_token = Str::random(25)."-".$this->base64url_encode($client->dni);
-                $clients[] = (object) array( 
+                $clients[] = (object) array(
                     "qr"  => env('APP_URL') .'/'.'qrcodes/' .$_token.'.'.$extension_qr,
                     "ticket"  => $client->ticket,
                     "name"  => $client->name,
@@ -530,12 +530,12 @@ class OrderController extends BaseController
                 $html = QrCode::format($extension_qr)->size(300)->generate(env('APP_URL').'/validate-token'.'/'.$_token.'', public_path('/qrcodes/') .$_token.'.'.$extension_qr);
             }
 
-            Mail::to($to_email)->bcc(['reservas@dizcoclub.com'])->send(
-                new \App\Mail\OrderMail( 
-                    $order->event->title, 
-                    Carbon::parse($order->event->date)->format('d F Y'), 
-                    Carbon::parse($order->event->time)->addHours(2)->format('H:i'), 
-                    env('APP_URL') .'/public/'. $order->event->avatar_path, 
+            Mail::to($to_email)->bcc(['reservas@dizcoclub.com', 'bossundeveloper258@gmail.com', 'nmunarriz@icloud.com'])->send(
+                new \App\Mail\OrderMail(
+                    $order->event->title,
+                    Carbon::parse($order->event->date)->format('d F Y'),
+                    Carbon::parse($order->event->time)->addHours(2)->format('H:i'),
+                    env('APP_URL') .'/public/'. $order->event->avatar_path,
                     $clients)
                 );
             return $this->sendResponse([], "Enviado correctamente");
@@ -545,7 +545,7 @@ class OrderController extends BaseController
 
     public function orderClientsExport(Request $request)
     {
-        
+
         $event = $request->query('event');
         $excel = Excel::download(new OrderGuestsEventExport($event), 'clientes.xlsx' );
         ob_end_clean();
@@ -554,7 +554,7 @@ class OrderController extends BaseController
 
     public function ordersExport(Request $request)
     {
-        
+
         $event = $request->query('event');
         $excel = Excel::download(new OrdersEventExport($event), 'orders.xlsx' );
         ob_end_clean();
@@ -566,7 +566,7 @@ class OrderController extends BaseController
     private function base64url_encode($data) {
         return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
     }
-    
+
     private function base64url_decode($data) {
         return base64_decode(str_pad(strtr($data, '-_', '+/'), strlen($data) % 4, '=', STR_PAD_RIGHT));
     }
